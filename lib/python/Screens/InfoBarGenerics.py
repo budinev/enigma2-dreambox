@@ -1,6 +1,5 @@
 from __future__ import print_function
 from Screens.ChannelSelection import ChannelSelection, BouquetSelector, SilentBouquetSelector
-
 from Components.ActionMap import ActionMap, HelpableActionMap
 from Components.ActionMap import NumberActionMap
 from Components.Harddisk import harddiskmanager
@@ -19,7 +18,6 @@ from Components.VolumeControl import VolumeControl
 from Components.Sources.StaticText import StaticText
 from Screens.EpgSelection import EPGSelection
 from Plugins.Plugin import PluginDescriptor
-
 from Screens.Screen import Screen
 from Screens.ScreenSaver import InfoBarScreenSaver
 from Screens import Standby
@@ -36,23 +34,17 @@ from Screens.SubtitleDisplay import SubtitleDisplay
 from Screens.RdsDisplay import RdsInfoDisplay, RassInteractive
 from Screens.TimeDateInput import TimeDateInput
 from Screens.UnhandledKey import UnhandledKey
-from ServiceReference import ServiceReference, isPlayableForCur
-
+from ServiceReference import ServiceReference, isPlayableForCur, hdmiInServiceRef
 from Tools import Notifications, ASCIItranslit
 from Tools.Directories import fileExists, getRecordingFilename, moveFiles
 from Tools.KeyBindings import getKeyDescription
-from Tools.ServiceReference import hdmiInServiceRef
-
 from enigma import eTimer, eServiceCenter, eDVBServicePMTHandler, iServiceInformation, iPlayableService, eServiceReference, eEPGCache, eActionMap, getDesktop, eDVBDB, getBoxType, getBoxBrand
-
 from time import time, localtime, strftime
 import os
 from bisect import insort
 from sys import maxint
 import itertools, datetime
-
 from RecordTimer import RecordTimerEntry, RecordTimer, findSafeRecordPath
-
 # hack alert!
 from Screens.Menu import MainMenu, mdom
 
@@ -2141,7 +2133,7 @@ class InfoBarTimeshift():
 		if int(config.usage.timeshift_start_delay.value):
 			self.ts_start_delay_timer.start(int(config.usage.timeshift_start_delay.value) * 1000, True)
 
-	def checkTimeshiftRunning(self, returnFunction):
+	def checkTimeshiftRunning(self, returnFunction, timeout=-1):
 		if self.timeshiftEnabled() and config.usage.check_timeshift.value and self.timeshift_was_activated:
 			message = _("Stop timeshift?")
 			if not self.save_timeshift_file:
@@ -2153,7 +2145,7 @@ class InfoBarTimeshift():
 					remaining = self.currentEventTime()
 					if remaining > 0:
 						message += "\n" + _("The %d min remaining before the end of the event.") % abs(remaining / 60)
-			self.session.openWithCallback(boundFunction(self.checkTimeshiftRunningCallback, returnFunction), MessageBox, message, simple = True, list = choice)
+			self.session.openWithCallback(boundFunction(self.checkTimeshiftRunningCallback, returnFunction), MessageBox, message, timeout=timeout, simple=True, list=choice)
 		else:
 			returnFunction(True)
 

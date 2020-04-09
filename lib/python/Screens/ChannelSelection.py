@@ -1,6 +1,5 @@
 from __future__ import print_function
 from Tools.Profile import profile
-
 from Screens.Screen import Screen
 import Screens.InfoBar
 from Screens.ScreenSaver import InfoBarScreenSaver
@@ -12,7 +11,7 @@ from Components.MenuList import MenuList
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 profile("ChannelSelection.py 1")
 from Screens.EpgSelection import EPGSelection
-from enigma import eServiceReference, eEPGCache, eServiceCenter, eRCInput, eTimer, eDVBDB, iPlayableService, iServiceInformation, getPrevAsciiCode
+from enigma import eServiceReference, eServiceReferenceDVB, eEPGCache, eServiceCenter, eRCInput, eTimer, eDVBDB, iPlayableService, iServiceInformation, getPrevAsciiCode
 from Components.config import config, configfile, ConfigSubsection, ConfigText, ConfigYesNo
 from Tools.NumericalTextInput import NumericalTextInput
 profile("ChannelSelection.py 2")
@@ -35,12 +34,11 @@ from Screens.Hotkey import InfoBarHotkey, hotkeyActionMap, hotkey
 profile("ChannelSelection.py 4")
 from Screens.PictureInPicture import PictureInPicture
 from Screens.RdsDisplay import RassInteractive
-from ServiceReference import ServiceReference
+from ServiceReference import ServiceReference, service_types_tv_ref, service_types_radio_ref, serviceRefAppendPath
 from Tools.BoundFunction import boundFunction
 from Tools import Notifications
 from Tools.Alternatives import GetWithAlternative
 from Tools.Directories import fileExists, resolveFilename, SCOPE_PLUGINS
-from Tools.ServiceReference import service_types_tv_ref, service_types_radio_ref, serviceRefAppendPath
 from Plugins.Plugin import PluginDescriptor
 from Components.PluginComponent import plugins
 from Screens.ChoiceBox import ChoiceBox
@@ -2024,6 +2022,10 @@ class ChannelSelection(ChannelSelectionBase, ChannelSelectionEdit, ChannelSelect
 		lastservice = eServiceReference(self.lastservice.value)
 		if lastservice.valid():
 			self.setCurrentSelection(lastservice)
+			ref = self.session.nav.getCurrentlyPlayingServiceOrGroup()
+			if ref and Components.ParentalControl.parentalControl.isProtected(ref):
+				if self.getCurrentSelection() and self.getCurrentSelection() != ref:
+					self.setCurrentSelection(ref)
 
 	def doTVButton(self):
 		if self.mode == MODE_TV:
