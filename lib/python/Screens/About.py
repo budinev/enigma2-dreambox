@@ -48,32 +48,15 @@ class About(Screen):
 			rctype = open("/proc/stb/ir/rc/type", "r").read().strip()
 			AboutText += _("RC type: ") + rctype + "\n"
 
+		AboutText += "\n"
 		cpu = about.getCPUInfoString()
 		AboutText += _("CPU: ") + cpu + "\n"
 		AboutText += _("CPU brand: ") + about.getCPUBrand() + "\n"
 		AboutText += _("CPU architecture: ") + about.getCPUArch() + "\n"
-		if boxbranding.getImageFPU() != "":
-			AboutText += _("FPU: ") + boxbranding.getImageFPU() + "\n"
-		AboutText += _("Image architecture: ") + boxbranding.getImageArch() + "\n"
 
-		if boxbranding.getImageArch() == "aarch64":
-			if boxbranding.getHaveMultiLib() == "True":
-				AboutText += _("MultiLib: ") + _("Yes") + "\n"
-			else:
-				AboutText += _("MultiLib: ") + _("No") + "\n"
-
-		AboutText += _("Flash type: ") + about.getFlashType() + "\n"
-
-		AboutText += "\n" + _("Image: ") + about.getImageTypeString() + "\n"
-		AboutText += _("Feed URL: ") + boxbranding.getFeedsUrl() + "\n"
-
-		AboutText += _("Open Vision version: ") + about.getVisionVersion() + "\n"
-		AboutText += _("Open Vision revision: ") + about.getVisionRevision() + "\n"
-		AboutText += _("Open Vision module: ") + about.getVisionModule() + "\n"
-
-		AboutText += "\n" + _("Compiled by: ") + boxbranding.getDeveloperName() + "\n"
-		AboutText += _("Build date: ") + about.getBuildDateString() + "\n"
-		AboutText += _("Last update: ") + about.getUpdateDateString() + "\n"
+		if not boxbranding.getDisplayType().startswith(' '):
+			AboutText += "\n"
+			AboutText += _("Display type: ") + boxbranding.getDisplayType() + "\n"
 
 		# [WanWizard] Removed until we find a reliable way to determine the installation date
 		# AboutText += _("Installed: ") + about.getFlashDateString() + "\n"
@@ -87,50 +70,14 @@ class About(Screen):
 		EnigmaVersion = _("Enigma version: ") + EnigmaVersion
 		self["EnigmaVersion"] = StaticText(EnigmaVersion)
 		AboutText += "\n" + EnigmaVersion + "\n"
+		AboutText += _("Last update: ") + about.getUpdateDateString() + "\n"
 		AboutText += _("Enigma (re)starts: %d\n") % config.misc.startCounter.value
 		AboutText += _("Enigma debug level: %d\n") % eGetEnigmaDebugLvl()
 
-		AboutText += "\n" + _("Kernel version: ") + about.getKernelVersionString() + "\n"
+		AboutText += "\n"
 
-		AboutText += _("DVB driver version: ") + about.getDriverInstalledDate() + "\n"
-		AboutText += _("DVB API: ") + about.getDVBAPI() + "\n"
-		if fileExists("/usr/bin/dvb-fe-tool"):
-			import time
-			try:
-				cmd = 'dvb-fe-tool > /tmp/dvbfetool.txt'
-				res = Console().ePopen(cmd)
-				time.sleep(0.1)
-			except:
-				pass
-		if fileExists("/tmp/dvbfetool.txt"):
-			if fileHas("/tmp/dvbfetool.txt","DVBC") or fileHas("/tmp/dvbfetool.txt","DVB-C"):
-				AboutText += _("DVB-C: ") + _("Yes") + "\n"
-			else:
-				AboutText += _("DVB-C: ") + _("No") + "\n"
-			if fileHas("/tmp/dvbfetool.txt","DVBS") or fileHas("/tmp/dvbfetool.txt","DVB-S"):
-				AboutText += _("DVB-S: ") + _("Yes") + "\n"
-			else:
-				AboutText += _("DVB-S: ") + _("No") + "\n"
-			if fileHas("/tmp/dvbfetool.txt","DVBT") or fileHas("/tmp/dvbfetool.txt","DVB-T"):
-				AboutText += _("DVB-T: ") + _("Yes") + "\n"
-			else:
-				AboutText += _("DVB-T: ") + _("No") + "\n"
-			if fileHas("/tmp/dvbfetool.txt","MULTISTREAM"):
-				AboutText += _("Multistream: ") + _("Yes") + "\n"
-			else:
-				AboutText += _("Multistream: ") + _("No") + "\n"
-			if fileHas("/tmp/dvbfetool.txt","ANNEX_A") or fileHas("/tmp/dvbfetool.txt","ANNEX-A"):
-				AboutText += _("ANNEX-A: ") + _("Yes") + "\n"
-			else:
-				AboutText += _("ANNEX-A: ") + _("No") + "\n"
-			if fileHas("/tmp/dvbfetool.txt","ANNEX_B") or fileHas("/tmp/dvbfetool.txt","ANNEX-B"):
-				AboutText += _("ANNEX-B: ") + _("Yes") + "\n"
-			else:
-				AboutText += _("ANNEX-B: ") + _("No") + "\n"
-			if fileHas("/tmp/dvbfetool.txt","ANNEX_C") or fileHas("/tmp/dvbfetool.txt","ANNEX-C"):
-				AboutText += _("ANNEX-C: ") + _("Yes") + "\n"
-			else:
-				AboutText += _("ANNEX-C: ") + _("No") + "\n"
+		AboutText += _("Driver version: ") + about.getDriverInstalledDate() + "\n"
+		AboutText += _("Kernel version: ") + about.getKernelVersionString() + "\n"
 
 		GStreamerVersion = _("GStreamer version: ") + about.getGStreamerVersionString(cpu).replace("GStreamer","")
 		self["GStreamerVersion"] = StaticText(GStreamerVersion)
@@ -140,31 +87,25 @@ class About(Screen):
 		self["FFmpegVersion"] = StaticText(FFmpegVersion)
 		AboutText += FFmpegVersion + "\n"
 
+		AboutText += "\n"
 		AboutText += _("Python version: ") + about.getPythonVersionString() + "\n"
+		AboutText += "\n"
 
 		fp_version = getFPVersion()
 		if fp_version is None:
 			fp_version = ""
 		else:
 			fp_version = _("Frontprocessor version: %s") % fp_version
+
 			AboutText += fp_version + "\n"
 
 		self["FPVersion"] = StaticText(fp_version)
 
-		if boxbranding.getHaveTranscoding() != "":
-			AboutText += _("Transcoding: ") + _("Yes") + "\n"
-		else:
-			AboutText += _("Transcoding: ") + _("No") + "\n"
-
-		if boxbranding.getHaveMultiTranscoding() != "":
-			AboutText += _("MultiTranscoding: ") + _("Yes") + "\n"
-		else:
-			AboutText += _("MultiTranscoding: ") + _("No") + "\n"
-
 		AboutText += _('Skin & Resolution: %s (%sx%s)\n') % (config.skin.primary_skin.value.split('/')[0], getDesktop(0).size().width(), getDesktop(0).size().height())
 
 		self["TunerHeader"] = StaticText(_("Detected NIMs:"))
-		AboutText += "\n" + _("Detected NIMs:") + "\n"
+		AboutText += "\n"
+		AboutText += _("Detected NIMs:") + "\n"
 
 		nims = nimmanager.nimListCompressed()
 		for count in range(len(nims)):
@@ -175,7 +116,8 @@ class About(Screen):
 			AboutText += nims[count] + "\n"
 
 		self["HDDHeader"] = StaticText(_("Detected HDD:"))
-		AboutText += "\n" + _("Detected HDD:") + "\n"
+		AboutText += "\n"
+		AboutText += _("Detected HDD:") + "\n"
 
 		hddlist = harddiskmanager.HDDList()
 		hddinfo = ""
@@ -226,12 +168,174 @@ class About(Screen):
 	def showTroubleshoot(self):
 		self.session.open(Troubleshoot)
 
+class OpenVisionInformation(Screen):
+	def __init__(self, session):
+		Screen.__init__(self, session)
+		self.setTitle(_("Open Vision information"))
+
+		OpenVisionInformationText = _("Open Vision information") + "\n"
+
+		OpenVisionInformationText += "\n"
+
+		OpenVisionInformationText += _("Open Vision version: ") + about.getVisionVersion() + "\n"
+		OpenVisionInformationText += _("Open Vision revision: ") + about.getVisionRevision() + "\n"
+		OpenVisionInformationText += _("Open Vision module: ") + about.getVisionModule() + "\n"
+		OpenVisionInformationText += _("Flash type: ") + about.getFlashType() + "\n"
+
+		OpenVisionInformationText += "\n"
+
+		OpenVisionInformationText += _("Image architecture: ") + boxbranding.getImageArch() + "\n"
+		if boxbranding.getImageFolder() != "":
+			OpenVisionInformationText += _("Image folder: ") + boxbranding.getImageFolder() + "\n"
+		if boxbranding.getImageFileSystem() != "":
+			OpenVisionInformationText += _("Image file system: ") + boxbranding.getImageFileSystem() + "\n"
+		OpenVisionInformationText += _("Image: ") + about.getImageTypeString() + "\n"
+		OpenVisionInformationText += _("Feed URL: ") + boxbranding.getFeedsUrl() + "\n"
+
+		OpenVisionInformationText += _("Compiled by: ") + boxbranding.getDeveloperName() + "\n"
+		OpenVisionInformationText += _("Build date: ") + about.getBuildDateString() + "\n"
+
+		if boxbranding.getOEVersion().startswith('9'):
+			OpenVisionInformationText += _("OE: ") + _("master") + "\n"
+		else:
+			OpenVisionInformationText += _("OE: ") + _("pyro") + "\n"
+
+		OpenVisionInformationText += "\n"
+
+		if boxbranding.getImageFPU() != "":
+			OpenVisionInformationText += _("FPU: ") + boxbranding.getImageFPU() + "\n"
+
+		if boxbranding.getImageArch() == "aarch64":
+			if boxbranding.getHaveMultiLib() == "True":
+				OpenVisionInformationText += _("MultiLib: ") + _("Yes") + "\n"
+			else:
+				OpenVisionInformationText += _("MultiLib: ") + _("No") + "\n"
+
+		OpenVisionInformationText += "\n"
+
+		if boxbranding.getMachineMtdBoot() != "":
+			OpenVisionInformationText += _("MTD boot: ") + boxbranding.getMachineMtdBoot() + "\n"
+		if boxbranding.getMachineMtdRoot() != "":
+			OpenVisionInformationText += _("MTD root: ") + boxbranding.getMachineMtdRoot() + "\n"
+		if boxbranding.getMachineMtdKernel() != "":
+			OpenVisionInformationText += _("MTD kernel: ") + boxbranding.getMachineMtdKernel() + "\n"
+
+		if boxbranding.getMachineRootFile() != "":
+			OpenVisionInformationText += _("Root file: ") + boxbranding.getMachineRootFile() + "\n"
+		if boxbranding.getMachineKernelFile() != "":
+			OpenVisionInformationText += _("Kernel file: ") + boxbranding.getMachineKernelFile() + "\n"
+
+		if boxbranding.getMachineMKUBIFS() != "":
+			OpenVisionInformationText += _("MKUBIFS: ") + boxbranding.getMachineMKUBIFS() + "\n"
+		if boxbranding.getMachineUBINIZE() != "":
+			OpenVisionInformationText += _("UBINIZE: ") + boxbranding.getMachineUBINIZE() + "\n"
+
+		self["AboutScrollLabel"] = ScrollLabel(OpenVisionInformationText)
+		self["key_red"] = Button(_("Close"))
+
+		self["actions"] = ActionMap(["ColorActions", "SetupActions", "DirectionActions"],
+			{
+				"cancel": self.close,
+				"ok": self.close,
+				"up": self["AboutScrollLabel"].pageUp,
+				"down": self["AboutScrollLabel"].pageDown
+			})
+
+class DVBInformation(Screen):
+	def __init__(self, session):
+		Screen.__init__(self, session)
+		self.setTitle(_("DVB information"))
+
+		DVBInformationText = _("DVB information") + "\n"
+
+		DVBInformationText += "\n"
+
+		DVBInformationText += _("DVB API: ") + about.getDVBAPI() + "\n"
+
+		if fileExists("/usr/bin/dvb-fe-tool"):
+			import time
+			try:
+				cmd = 'dvb-fe-tool > /tmp/dvbfetool.txt'
+				res = Console().ePopen(cmd)
+				cmdv = "dvb-fe-tool | grep -o 'DVB API Version [0-9].[0-9]*' | sed 's|[^0-9]*||' > /tmp/dvbapiversion.txt"
+				resv = Console().ePopen(cmdv)
+				time.sleep(0.1)
+			except:
+				pass
+
+		if fileExists("/tmp/dvbapiversion.txt"):
+			dvbapiversion = open("/tmp/dvbapiversion.txt", "r").read().strip()
+			DVBInformationText += _("DVB API version: ") + dvbapiversion + "\n"
+
+		DVBInformationText += "\n"
+
+		if boxbranding.getHaveTranscoding() != "":
+			DVBInformationText += _("Transcoding: ") + _("Yes") + "\n"
+		else:
+			DVBInformationText += _("Transcoding: ") + _("No") + "\n"
+
+		if boxbranding.getHaveMultiTranscoding() != "":
+			DVBInformationText += _("MultiTranscoding: ") + _("Yes") + "\n"
+		else:
+			DVBInformationText += _("MultiTranscoding: ") + _("No") + "\n"
+
+		DVBInformationText += "\n"
+
+		if fileExists("/tmp/dvbfetool.txt"):
+			if fileHas("/tmp/dvbfetool.txt","DVBC") or fileHas("/tmp/dvbfetool.txt","DVB-C"):
+				DVBInformationText += _("DVB-C: ") + _("Yes") + "\n"
+			else:
+				DVBInformationText += _("DVB-C: ") + _("No") + "\n"
+			if fileHas("/tmp/dvbfetool.txt","DVBS") or fileHas("/tmp/dvbfetool.txt","DVB-S"):
+				DVBInformationText += _("DVB-S: ") + _("Yes") + "\n"
+			else:
+				DVBInformationText += _("DVB-S: ") + _("No") + "\n"
+			if fileHas("/tmp/dvbfetool.txt","DVBT") or fileHas("/tmp/dvbfetool.txt","DVB-T"):
+				DVBInformationText += _("DVB-T: ") + _("Yes") + "\n"
+			else:
+				DVBInformationText += _("DVB-T: ") + _("No") + "\n"
+
+			DVBInformationText += "\n"
+
+			if fileHas("/tmp/dvbfetool.txt","MULTISTREAM"):
+				DVBInformationText += _("Multistream: ") + _("Yes") + "\n"
+			else:
+				DVBInformationText += _("Multistream: ") + _("No") + "\n"
+
+			DVBInformationText += "\n"
+
+			if fileHas("/tmp/dvbfetool.txt","ANNEX_A") or fileHas("/tmp/dvbfetool.txt","ANNEX-A"):
+				DVBInformationText += _("ANNEX-A: ") + _("Yes") + "\n"
+			else:
+				DVBInformationText += _("ANNEX-A: ") + _("No") + "\n"
+			if fileHas("/tmp/dvbfetool.txt","ANNEX_B") or fileHas("/tmp/dvbfetool.txt","ANNEX-B"):
+				DVBInformationText += _("ANNEX-B: ") + _("Yes") + "\n"
+			else:
+				DVBInformationText += _("ANNEX-B: ") + _("No") + "\n"
+			if fileHas("/tmp/dvbfetool.txt","ANNEX_C") or fileHas("/tmp/dvbfetool.txt","ANNEX-C"):
+				DVBInformationText += _("ANNEX-C: ") + _("Yes") + "\n"
+			else:
+				DVBInformationText += _("ANNEX-C: ") + _("No") + "\n"
+
+		self["AboutScrollLabel"] = ScrollLabel(DVBInformationText)
+		self["key_red"] = Button(_("Close"))
+
+		self["actions"] = ActionMap(["ColorActions", "SetupActions", "DirectionActions"],
+			{
+				"cancel": self.close,
+				"ok": self.close,
+				"up": self["AboutScrollLabel"].pageUp,
+				"down": self["AboutScrollLabel"].pageDown
+			})
+
 class Geolocation(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.setTitle(_("Geolocation"))
 
-		GeolocationText = _("Geolocation information") + "\n" + "\n"
+		GeolocationText = _("Geolocation information") + "\n"
+
+		GeolocationText += "\n"
 
 		continent = geolocation.get("continent", None)
 		if isinstance(continent, unicode):
@@ -255,7 +359,9 @@ class Geolocation(Screen):
 		if isinstance(city, unicode):
 			city = city.encode(encoding="UTF-8", errors="ignore")
 		if city is not None:
-			GeolocationText +=  _("City: ") + city + "\n" + "\n"
+			GeolocationText +=  _("City: ") + city + "\n"
+
+		GeolocationText += "\n"
 
 		timezone = geolocation.get("timezone", None)
 		if isinstance(timezone, unicode):
@@ -267,7 +373,9 @@ class Geolocation(Screen):
 		if isinstance(currency, unicode):
 			currency = currency.encode(encoding="UTF-8", errors="ignore")
 		if currency is not None:
-			GeolocationText +=  _("Currency: ") + currency + "\n" + "\n"
+			GeolocationText +=  _("Currency: ") + currency + "\n"
+
+		GeolocationText += "\n"
 
 		latitude = geolocation.get("lat", None)
 		if str(float(latitude)) is not None:
@@ -524,7 +632,8 @@ class SystemNetworkInfo(Screen):
 			self.iface = 'wlan3'
 
 		rx_bytes, tx_bytes = about.getIfTransferredData(self.iface)
-		self.AboutText += "\n" + _("Bytes received:") + "\t" + rx_bytes + "\n"
+		self.AboutText += "\n"
+		self.AboutText += _("Bytes received:") + "\t" + rx_bytes + "\n"
 		self.AboutText += _("Bytes sent:") + "\t" + tx_bytes + "\n"
 
 		isp = geolocation.get("isp", None)
@@ -533,11 +642,12 @@ class SystemNetworkInfo(Screen):
 			isp = isp.encode(encoding="UTF-8", errors="ignore")
 		if isinstance(isporg, unicode):
 			isporg = isporg.encode(encoding="UTF-8", errors="ignore")
+		self.AboutText += "\n"
 		if isp is not None:
 			if isporg is not None:
-				self.AboutText +=  "\n" + _("ISP: ") + isp + " " + "(" + isporg + ")" + "\n"
+				self.AboutText += _("ISP: ") + isp + " " + "(" + isporg + ")" + "\n"
 			else:
-				self.AboutText +=  "\n" + _("ISP: ") + isp + "\n"
+				self.AboutText += _("ISP: ") + isp + "\n"
 
 		mobile = geolocation.get("mobile", False)
 		if mobile is not False:
@@ -553,7 +663,9 @@ class SystemNetworkInfo(Screen):
 
 		publicip = geolocation.get("query", None)
 		if str(publicip) != "":
-			self.AboutText +=  _("Public IP: ") + str(publicip) + "\n" + "\n"
+			self.AboutText +=  _("Public IP: ") + str(publicip) + "\n"
+
+		self.AboutText += "\n"
 
 		self.console = Console()
 		self.console.ePopen('ethtool %s' % self.iface, self.SpeedFinished)
@@ -566,7 +678,8 @@ class SystemNetworkInfo(Screen):
 				self.AboutText += _("Speed:") + "\t" + speed + _('Mb/s')
 
 		hostname = file('/proc/sys/kernel/hostname').read()
-		self.AboutText += "\n" + _("Hostname:") + "\t" + hostname + "\n"
+		self.AboutText += "\n"
+		self.AboutText += _("Hostname:") + "\t" + hostname + "\n"
 		self["AboutScrollLabel"].setText(self.AboutText)
 
 	def cleanup(self):
