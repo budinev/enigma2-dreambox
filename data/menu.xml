@@ -109,7 +109,7 @@ self.session.open(DevicesMountPanel)
 			<id val="information"/>
 			<item level="1" text="Service" entryID="service_info_screen"><screen module="ServiceInfo" screen="ServiceInfo"/></item>
 			<item level="0" text="About" entryID="about_screen"><screen module="About"/></item>
-			<item level="0" text="Open Vision" entryID="openvision_screen"><screen module="About" screen="OpenVisionInformation"/></item>
+			<item level="0" text="SatLodge" entryID="satloge_screen"><screen module="About" screen="SatLodgeInformation"/></item>
 			<item level="0" text="DVB" entryID="dvb_screen"><screen module="About" screen="DVBInformation"/></item>
 			<item level="0" text="Geolocation" entryID="geolocation_screen"><screen module="About" screen="Geolocation"/></item>
 			<!--
