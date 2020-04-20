@@ -11,8 +11,8 @@ from Components.ScrollLabel import ScrollLabel
 from Components.Button import Button
 from Components.Label import Label
 from Components.ProgressBar import ProgressBar
-from Tools.StbHardware import getFPVersion, getBoxProc
-from enigma import eTimer, eLabel, eConsoleAppContainer, getDesktop, eGetEnigmaDebugLvl
+from Tools.StbHardware import getFPVersion, getBoxProc, getHWSerial, getBoxRCType
+from enigma import eTimer, eLabel, eConsoleAppContainer, getDesktop, eGetEnigmaDebugLvl, getBoxType, getBoxBrand
 from Tools.Directories import fileExists, fileHas, pathExists
 from Components.GUIComponent import GUIComponent
 import skin, os, boxbranding
@@ -31,22 +31,26 @@ class About(Screen):
 
 		procmodel = getBoxProc()
 
-		AboutText = _("Hardware: ") + about.getHardwareTypeString() + "\n"
-		if procmodel != about.getHardwareTypeString():
+		AboutText = _("Hardware: ") + getBoxType() + "\n"
+		if procmodel != getBoxType():
 			AboutText += _("Proc model: ") + procmodel + "\n"
 
-		if fileExists("/proc/stb/info/sn") and not fileExists("/proc/stb/info/serial"):
-			hwserial = open("/proc/stb/info/sn", "r").read().strip()
+		hwserial = getHWSerial()
+		if hwserial is not None and hwserial != "unknown":
 			AboutText += _("Hardware serial: ") + hwserial + "\n"
-		if fileExists("/proc/stb/info/serial") and not fileExists("/proc/stb/info/sn"):
-			hwserial = open("/proc/stb/info/serial", "r").read().strip()
-			AboutText += _("Hardware serial: ") + hwserial + "\n"
+		if hwserial is not None and hwserial == "unknown":
+			AboutText += _("Hardware serial: ") + about.getCPUSerial() + "\n"
 
-		AboutText += _("Brand/Meta: ") + about.getHardwareBrand() + "\n"
+		AboutText += _("Brand/Meta: ") + getBoxBrand() + "\n"
 
-		if fileExists("/proc/stb/ir/rc/type"):
-			rctype = open("/proc/stb/ir/rc/type", "r").read().strip()
-			AboutText += _("RC type: ") + rctype + "\n"
+		boxrctype = getBoxRCType()
+		if boxrctype is not None and boxrctype != "unknown":
+			AboutText += _("RC type: ") + boxrctype + "\n"
+		if boxrctype is not None and boxrctype == "unknown":
+			if fileExists("/usr/bin/remotecfg"):
+				AboutText += _("RC type: ") + _("Amlogic remote") + "\n"
+			elif fileExists("/usr/sbin/lircd"):
+				AboutText += _("RC type: ") + _("LIRC remote") + "\n"
 
 		AboutText += "\n"
 		cpu = about.getCPUInfoString()
@@ -67,16 +71,16 @@ class About(Screen):
 			EnigmaVersion = EnigmaVersion[0] + " (" + EnigmaVersion[2] + "-" + EnigmaVersion[1] + ")"
 		else:
 			EnigmaVersion = EnigmaVersion[0] + " (" + EnigmaVersion[1] + ")"
-		EnigmaVersion = _("Enigma version: ") + EnigmaVersion
+		EnigmaVersion = _("Enigma2 version: ") + EnigmaVersion
 		self["EnigmaVersion"] = StaticText(EnigmaVersion)
 		AboutText += "\n" + EnigmaVersion + "\n"
 		AboutText += _("Last update: ") + about.getUpdateDateString() + "\n"
-		AboutText += _("Enigma (re)starts: %d\n") % config.misc.startCounter.value
-		AboutText += _("Enigma debug level: %d\n") % eGetEnigmaDebugLvl()
+		AboutText += _("Enigma2 (re)starts: %d\n") % config.misc.startCounter.value
+		AboutText += _("Enigma2 debug level: %d\n") % eGetEnigmaDebugLvl()
 
 		AboutText += "\n"
 
-		AboutText += _("Driver version: ") + about.getDriverInstalledDate() + "\n"
+		AboutText += _("Drivers version: ") + about.getDriverInstalledDate() + "\n"
 		AboutText += _("Kernel version: ") + about.getKernelVersionString() + "\n"
 
 		GStreamerVersion = _("GStreamer version: ") + about.getGStreamerVersionString(cpu).replace("GStreamer","")
@@ -177,8 +181,8 @@ class OpenVisionInformation(Screen):
 
 		OpenVisionInformationText += "\n"
 
-		OpenVisionInformationText += _("Open Vision version: ") + about.getVisionVersion() + "\n"
-		OpenVisionInformationText += _("Open Vision revision: ") + about.getVisionRevision() + "\n"
+		OpenVisionInformationText += _("Open Vision version: ") + boxbranding.getVisionVersion() + "\n"
+		OpenVisionInformationText += _("Open Vision revision: ") + boxbranding.getVisionRevision() + "\n"
 		OpenVisionInformationText += _("Open Vision module: ") + about.getVisionModule() + "\n"
 		OpenVisionInformationText += _("Flash type: ") + about.getFlashType() + "\n"
 
@@ -189,16 +193,13 @@ class OpenVisionInformation(Screen):
 			OpenVisionInformationText += _("Image folder: ") + boxbranding.getImageFolder() + "\n"
 		if boxbranding.getImageFileSystem() != "":
 			OpenVisionInformationText += _("Image file system: ") + boxbranding.getImageFileSystem() + "\n"
-		OpenVisionInformationText += _("Image: ") + about.getImageTypeString() + "\n"
+		OpenVisionInformationText += _("Image: ") + boxbranding.getImageDistro() + "\n"
 		OpenVisionInformationText += _("Feed URL: ") + boxbranding.getFeedsUrl() + "\n"
 
 		OpenVisionInformationText += _("Compiled by: ") + boxbranding.getDeveloperName() + "\n"
 		OpenVisionInformationText += _("Build date: ") + about.getBuildDateString() + "\n"
 
-		if boxbranding.getOEVersion().startswith('9'):
-			OpenVisionInformationText += _("OE: ") + _("master") + "\n"
-		else:
-			OpenVisionInformationText += _("OE: ") + _("pyro") + "\n"
+		OpenVisionInformationText += _("OE: ") + boxbranding.getImageBuild() + "\n"
 
 		OpenVisionInformationText += "\n"
 
@@ -229,6 +230,16 @@ class OpenVisionInformation(Screen):
 			OpenVisionInformationText += _("MKUBIFS: ") + boxbranding.getMachineMKUBIFS() + "\n"
 		if boxbranding.getMachineUBINIZE() != "":
 			OpenVisionInformationText += _("UBINIZE: ") + boxbranding.getMachineUBINIZE() + "\n"
+
+		OpenVisionInformationText += "\n"
+
+		if fileExists("/proc/device-tree/amlogic-dt-id"):
+			devicetid = open("/proc/device-tree/amlogic-dt-id", "r").read().strip()
+			OpenVisionInformationText += _("Device id: ") + devicetid + "\n"
+
+		if fileExists("/proc/device-tree/le-dt-id"):
+			giventid = open("/proc/device-tree/le-dt-id", "r").read().strip()
+			OpenVisionInformationText += _("Given device id: ") + giventid + "\n"
 
 		self["AboutScrollLabel"] = ScrollLabel(OpenVisionInformationText)
 		self["key_red"] = Button(_("Close"))
@@ -269,12 +280,12 @@ class DVBInformation(Screen):
 
 		DVBInformationText += "\n"
 
-		if boxbranding.getHaveTranscoding() != "":
+		if boxbranding.getHaveTranscoding() == "True":
 			DVBInformationText += _("Transcoding: ") + _("Yes") + "\n"
 		else:
 			DVBInformationText += _("Transcoding: ") + _("No") + "\n"
 
-		if boxbranding.getHaveMultiTranscoding() != "":
+		if boxbranding.getHaveMultiTranscoding() == "True":
 			DVBInformationText += _("MultiTranscoding: ") + _("Yes") + "\n"
 		else:
 			DVBInformationText += _("MultiTranscoding: ") + _("No") + "\n"
@@ -337,55 +348,58 @@ class Geolocation(Screen):
 
 		GeolocationText += "\n"
 
-		continent = geolocation.get("continent", None)
-		if isinstance(continent, unicode):
-			continent = continent.encode(encoding="UTF-8", errors="ignore")
-		if continent is not None:
-			GeolocationText +=  _("Continent: ") + continent + "\n"
+		try:
+			continent = geolocation.get("continent", None)
+			if isinstance(continent, unicode):
+				continent = continent.encode(encoding="UTF-8", errors="ignore")
+			if continent is not None:
+				GeolocationText +=  _("Continent: ") + continent + "\n"
 
-		country = geolocation.get("country", None)
-		if isinstance(country, unicode):
-			country = country.encode(encoding="UTF-8", errors="ignore")
-		if country is not None:
-			GeolocationText +=  _("Country: ") + country + "\n"
+			country = geolocation.get("country", None)
+			if isinstance(country, unicode):
+				country = country.encode(encoding="UTF-8", errors="ignore")
+			if country is not None:
+				GeolocationText +=  _("Country: ") + country + "\n"
 
-		state = geolocation.get("regionName", None)
-		if isinstance(state, unicode):
-			state = state.encode(encoding="UTF-8", errors="ignore")
-		if state is not None:
-			GeolocationText +=  _("State: ") + state + "\n"
+			state = geolocation.get("regionName", None)
+			if isinstance(state, unicode):
+				state = state.encode(encoding="UTF-8", errors="ignore")
+			if state is not None:
+				GeolocationText +=  _("State: ") + state + "\n"
 
-		city = geolocation.get("city", None)
-		if isinstance(city, unicode):
-			city = city.encode(encoding="UTF-8", errors="ignore")
-		if city is not None:
-			GeolocationText +=  _("City: ") + city + "\n"
+			city = geolocation.get("city", None)
+			if isinstance(city, unicode):
+				city = city.encode(encoding="UTF-8", errors="ignore")
+			if city is not None:
+				GeolocationText +=  _("City: ") + city + "\n"
 
-		GeolocationText += "\n"
+			GeolocationText += "\n"
 
-		timezone = geolocation.get("timezone", None)
-		if isinstance(timezone, unicode):
-			timezone = timezone.encode(encoding="UTF-8", errors="ignore")
-		if timezone is not None:
-			GeolocationText +=  _("Timezone: ") + timezone + "\n"
+			timezone = geolocation.get("timezone", None)
+			if isinstance(timezone, unicode):
+				timezone = timezone.encode(encoding="UTF-8", errors="ignore")
+			if timezone is not None:
+				GeolocationText +=  _("Timezone: ") + timezone + "\n"
 
-		currency = geolocation.get("currency", None)
-		if isinstance(currency, unicode):
-			currency = currency.encode(encoding="UTF-8", errors="ignore")
-		if currency is not None:
-			GeolocationText +=  _("Currency: ") + currency + "\n"
+			currency = geolocation.get("currency", None)
+			if isinstance(currency, unicode):
+				currency = currency.encode(encoding="UTF-8", errors="ignore")
+			if currency is not None:
+				GeolocationText +=  _("Currency: ") + currency + "\n"
 
-		GeolocationText += "\n"
+			GeolocationText += "\n"
 
-		latitude = geolocation.get("lat", None)
-		if str(float(latitude)) is not None:
-			GeolocationText +=  _("Latitude: ") + str(float(latitude)) + "\n"
+			latitude = geolocation.get("lat", None)
+			if str(float(latitude)) is not None:
+				GeolocationText +=  _("Latitude: ") + str(float(latitude)) + "\n"
 
-		longitude = geolocation.get("lon", None)
-		if str(float(longitude)) is not None:
-			GeolocationText +=  _("Longitude: ") + str(float(longitude)) + "\n"
+			longitude = geolocation.get("lon", None)
+			if str(float(longitude)) is not None:
+				GeolocationText +=  _("Longitude: ") + str(float(longitude)) + "\n"
+			self["AboutScrollLabel"] = ScrollLabel(GeolocationText)
+		except Exception as e:
+			self["AboutScrollLabel"] = ScrollLabel(_("Requires internet connection."))
 
-		self["AboutScrollLabel"] = ScrollLabel(GeolocationText)
 		self["key_red"] = Button(_("Close"))
 
 		self["actions"] = ActionMap(["ColorActions", "SetupActions", "DirectionActions"],

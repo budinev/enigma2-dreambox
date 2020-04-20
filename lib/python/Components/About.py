@@ -29,7 +29,7 @@ def getIfConfig(ifname):
 		pass
 	sock.close()
 	return ifreq
-	
+
 def getIfTransferredData(ifname):
 	f = open('/proc/net/dev', 'r')
 	for line in f:
@@ -37,7 +37,7 @@ def getIfTransferredData(ifname):
 			data = line.split('%s:' % ifname)[1].split()
 			rx_bytes, tx_bytes = (data[0], data[8])
 			f.close()
-			return rx_bytes, tx_bytes							
+			return rx_bytes, tx_bytes
 
 def getVersionString():
 	return getImageVersionString()
@@ -106,18 +106,12 @@ def getKernelVersionString():
 	except:
 		return _("unknown")
 
-def getHardwareTypeString():
-	return getBoxType()
-
-def getHardwareBrand():
-	return getBoxBrand()
-
-def getImageTypeString():
-	try:
-		image_type = open("/etc/issue").readlines()[-2].strip()[:-6]
-		return image_type.capitalize()
-	except:
-		return _("undefined")
+def getCPUSerial():
+    with open('/proc/cpuinfo','r') as f:
+        for line in f:
+            if line[0:6] == 'Serial':
+                return line[10:26]
+        return "0000000000000000"
 
 def getCPUInfoString():
 	try:
@@ -211,18 +205,6 @@ def getDVBAPI():
 		return _("Old")
 	else:
 		return _("New")
-
-def getVisionVersion():
-	try:
-		return open("/etc/visionversion","r").read().strip()
-	except:
-		return _("It's not a genuine Open Vision!")
-
-def getVisionRevision():
-	try:
-		return open("/etc/visionrevision","r").read().strip()
-	except:
-		return _("It's not a genuine Open Vision!")
 
 def getVisionModule():
 	if SystemInfo["OpenVisionModule"]:

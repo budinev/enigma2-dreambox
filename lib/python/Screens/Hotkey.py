@@ -53,6 +53,8 @@ class hotkey:
 		("Info (EPG)" + " " + _("long"), "info_long", "Infobar/showEventInfoPlugins"),
 		("List/Fav/PVR", "list", ""),
 		("List/Fav/PVR" + " " + _("long"), "list_long", "Plugins/Extensions/Kodi/1"),
+		("List/File", "file", ""),
+		("List/File" + " " + _("long"), "file_long", ""),
 		("Back/Recall", "back", ""),
 		("Back/Recall" + " " + _("long"), "back_long", ""),
 		("End", "end", ""),
@@ -66,7 +68,7 @@ class hotkey:
 		("Channel up", "channelup", ""),
 		("Channel down", "channeldown", ""),
 		("Page up", "pageUp", ""),
-		("Page up"  + " " + _("long"), "pageUp_long", ""),
+		("Page up"	+ " " + _("long"), "pageUp_long", ""),
 		("Page down", "pageDown", ""),
 		("Page down" + " " + _("long"), "pageDown_long", ""),
 		("Next", "next", ""),
@@ -166,6 +168,7 @@ def getHotkeyFunctions():
 	hotkey.functions.append((_("Switch channel down"), "Infobar/switchChannelDown", "InfoBar"))
 	hotkey.functions.append((_("Show service list"), "Infobar/openServiceList", "InfoBar"))
 	hotkey.functions.append((_("Show movies"), "Infobar/showMovies", "InfoBar"))
+	hotkey.functions.append((_("Play last movie"), "Infobar/restartLastMovie", "InfoBar"))
 	hotkey.functions.append((_("Show servicelist or movies"), "Infobar/showServiceListOrMovies", "InfoBar"))
 	hotkey.functions.append((_("Show favourites list"), "Infobar/openFavouritesList", "InfoBar"))
 	hotkey.functions.append((_("History back"), "Infobar/historyBack", "InfoBar"))
@@ -201,8 +204,8 @@ def getHotkeyFunctions():
 	hotkey.functions.append((_("Activate HbbTV (Redbutton)"), "Infobar/activateRedButton", "InfoBar"))
 	hotkey.functions.append((_("Toggle HDMI In"), "Infobar/HDMIIn", "InfoBar"))
 	if SystemInfo["HDMIin"]:
-                hotkey.functions.append((_("Toggle HDMI-In full screen"), "Infobar/HDMIInFull", "InfoBar"))
-                hotkey.functions.append((_("Toggle HDMI-In PiP"), "Infobar/HDMIInPiP", "InfoBar"))
+				hotkey.functions.append((_("Toggle HDMI-In full screen"), "Infobar/HDMIInFull", "InfoBar"))
+				hotkey.functions.append((_("Toggle HDMI-In PiP"), "Infobar/HDMIInPiP", "InfoBar"))
 	if SystemInfo["LcdLiveTV"]:
 		hotkey.functions.append((_("Toggle LCD LiveTV"), "Infobar/ToggleLCDLiveTV", "InfoBar"))
 	hotkey.functions.append((_("Toggle dashed flickering line for this service"), "Infobar/ToggleHideVBI", "InfoBar"))
@@ -250,8 +253,8 @@ def getHotkeyFunctions():
 	hotkey.functions.append((_("Language"), "Module/Screens.LanguageSelection/LanguageSelection", "Setup"))
 	hotkey.functions.append((_("OScam Info"), "Module/Screens.OScamInfo/OscamInfoMenu", "Plugins"))
 	hotkey.functions.append((_("Memory Info"), "Module/Screens.About/MemoryInfo", "Setup"))
-#	if SystemInfo["canMultiBoot"]:
-#		hotkey.functions.append((_("Multiboot image selector"), "Module/Screens.FlashImage/MultibootSelection", "Setup"))
+	if SystemInfo["canMultiBoot"]:
+		hotkey.functions.append((_("Multiboot image selector"), "Module/Screens.FlashImage/MultibootSelection", "Setup"))
 	if os.path.isdir("/etc/ppanels"):
 		for x in [x for x in os.listdir("/etc/ppanels") if x.endswith(".xml")]:
 			x = x[:-4]
@@ -666,7 +669,7 @@ class InfoBarHotkey():
 			elif selected[0] == "Module":
 				try:
 					exec("from %s import %s" % (selected[1], selected[2]))
-					exec("self.session.open(%s)" %  ",".join(selected[2:]))
+					exec("self.session.open(%s)" %	",".join(selected[2:]))
 				except Exception as e:
 					print("[Hotkey] error during executing module %s, screen %s, %s" % (selected[1], selected[2], e))
 					import traceback

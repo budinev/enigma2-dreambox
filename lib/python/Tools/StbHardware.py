@@ -22,11 +22,39 @@ def getBoxProc():
 			procmodel = open("/proc/stb/info/boxtype", "r").readline().strip().lower()
 		elif fileExists("/proc/boxtype"):
 			procmodel = open("/proc/boxtype", "r").readline().strip().lower()
+		elif fileExists("/proc/device-tree/model"):
+			procmodel = open("/proc/device-tree/model", "r").readline().strip()
+		elif fileExists("/sys/firmware/devicetree/base/model"):
+			procmodel = open("/sys/firmware/devicetree/base/model", "r").readline().strip()
 		else:
 			procmodel = open("/proc/stb/info/model", "r").readline().strip().lower()
 	except IOError:
 		print("[StbHardware] getBoxProc failed!")
 	return procmodel
+
+def getHWSerial():
+	hwserial = "unknown"
+	try:
+		if fileExists("/proc/stb/info/sn"):
+			hwserial = open("/proc/stb/info/sn", "r").read().strip()
+		elif fileExists("/proc/stb/info/serial"):
+			hwserial = open("/proc/stb/info/serial", "r").read().strip()
+		elif fileExists("/proc/stb/info/serial_number"):
+			hwserial = open("/proc/stb/info/serial_number", "r").read().strip()
+		else:
+			hwserial = open("/sys/class/dmi/id/product_serial", "r").read().strip()
+	except IOError:
+		print("[StbHardware] getHWSerial failed!")
+	return hwserial
+
+def getBoxRCType():
+	boxrctype = "unknown"
+	try:
+		if fileExists("/proc/stb/ir/rc/type"):
+			boxrctype = open("/proc/stb/ir/rc/type", "r").read().strip()
+	except IOError:
+		print("[StbHardware] getBoxRCType failed!")
+	return boxrctype
 
 def getFPVersion():
 	ret = None
