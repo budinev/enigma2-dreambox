@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 from os import path
 from fcntl import ioctl
@@ -23,7 +25,7 @@ def getBoxProc():
 		elif fileExists("/proc/boxtype"):
 			procmodel = open("/proc/boxtype", "r").readline().strip().lower()
 		elif fileExists("/proc/device-tree/model"):
-			procmodel = open("/proc/device-tree/model", "r").readline().strip()
+			procmodel = open("/proc/device-tree/model", "r").readline().strip()[0:12]
 		elif fileExists("/sys/firmware/devicetree/base/model"):
 			procmodel = open("/sys/firmware/devicetree/base/model", "r").readline().strip()
 		else:
@@ -57,24 +59,22 @@ def getBoxRCType():
 	return boxrctype
 
 def getFPVersion():
-	ret = None
+	ret = "unknown"
 	try:
 		if getBoxBrand() == "blackbox" and fileExists("/proc/stb/info/micomver"):
 			ret = open("/proc/stb/info/micomver", "r").read()
-		elif SystemInfo["DreamBoxDTSAudio"] or getBoxType().startswith("dm9") or getBoxType().startswith("dm52"):
-			ret = open("/proc/stb/fp/version", "r").read()
+		elif fileExists("/proc/stb/fp/version"):
+			if SystemInfo["DreamBoxDTSAudio"] or getBoxType().startswith("dm9") or getBoxType().startswith("dm52"):
+				ret = open("/proc/stb/fp/version", "r").read()
+			else:
+				ret = long(open("/proc/stb/fp/version", "r").read())
+		elif fileExists("/sys/firmware/devicetree/base/bolt/tag"):
+			ret = open("/sys/firmware/devicetree/base/bolt/tag", "r").read().rstrip("\0")
 		else:
-			ret = long(open("/proc/stb/fp/version", "r").read())
-	except IOError:
-		try:
 			fp = open("/dev/dbox/fp0")
 			ret = ioctl(fp.fileno(),0)
-			fp.close()
-		except IOError:
-			try:
-				ret = open("/sys/firmware/devicetree/base/bolt/tag", "r").read().rstrip("\0")
-			except:
-				print("[StbHardware] getFPVersion failed!")
+	except IOError:
+		print("[StbHardware] getFPVersion failed!")
 	return ret
 
 def setFPWakeuptime(wutime):
@@ -84,7 +84,6 @@ def setFPWakeuptime(wutime):
 		try:
 			fp = open("/dev/dbox/fp0")
 			ioctl(fp.fileno(), 6, pack('L', wutime)) # set wake up
-			fp.close()
 		except IOError:
 			print("[StbHardware] setFPWakeupTime failed!")
 
@@ -113,7 +112,6 @@ def setRTCtime(wutime):
 		try:
 			fp = open("/dev/dbox/fp0")
 			ioctl(fp.fileno(), 0x101, pack('L', wutime)) # set wake up
-			fp.close()
 		except IOError:
 			print("[StbHardware] setRTCtime failed!")
 
@@ -125,7 +123,6 @@ def getFPWakeuptime():
 		try:
 			fp = open("/dev/dbox/fp0")
 			ret = unpack('L', ioctl(fp.fileno(), 5, '    '))[0] # get wakeuptime
-			fp.close()
 		except IOError:
 			print("[StbHardware] getFPWakeupTime failed!")
 	return ret
@@ -147,7 +144,6 @@ def getFPWasTimerWakeup(check = False):
 		try:
 			fp = open("/dev/dbox/fp0")
 			wasTimerWakeup = unpack('B', ioctl(fp.fileno(), 9, ' '))[0] and True or False
-			fp.close()
 		except IOError:
 			print("[StbHardware] wasTimerWakeup failed!")
 			isError = True
@@ -165,6 +161,5 @@ def clearFPWasTimerWakeup():
 		try:
 			fp = open("/dev/dbox/fp0")
 			ioctl(fp.fileno(), 10)
-			fp.close()
 		except IOError:
 			print("clearFPWasTimerWakeup failed!")

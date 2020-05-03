@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-15 18:09+0430\n"
+"POT-Creation-Date: 2020-04-30 14:08+0430\n"
 "PO-Revision-Date: 2017-01-18 16:38+0100\n"
 "Last-Translator: lupine <a_ecklon@hotmail.com>\n"
 "Language-Team: \n"
@@ -179,6 +179,30 @@ msgstr ""
 msgid "%-d-%b-%Y"
 msgstr ""
 
+#
+#, fuzzy
+msgid "%-d. %B %Y"
+msgstr "%d.%B %Y"
+
+msgid "%-d. %b"
+msgstr ""
+
+#, fuzzy
+msgid "%-d. %b %Y"
+msgstr "%A %d %B"
+
+msgid "%-d.%-m"
+msgstr ""
+
+msgid "%-d.%-m.%Y"
+msgstr ""
+
+msgid "%-d.%m"
+msgstr ""
+
+msgid "%-d.%m.%Y"
+msgstr ""
+
 msgid "%-d/%-m"
 msgstr ""
 
@@ -271,6 +295,30 @@ msgstr "%A %d %B"
 #, fuzzy
 msgid "%A %-d-%B-%Y"
 msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %-d. %B"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %-d. %B %Y"
+msgstr "%A %e %B %Y"
+
+#, fuzzy
+msgid "%A %-d.%-m"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %-d.%-m.%Y"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %-d.%m"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %-d.%m.%Y"
+msgstr "%A %e %B %Y"
 
 #, fuzzy
 msgid "%A %-d/%-m"
@@ -374,6 +422,30 @@ msgstr "%A %d %B"
 #, fuzzy
 msgid "%A %d-%B-%Y"
 msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %d. %B"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %d. %B %Y"
+msgstr "%A %e %B %Y"
+
+#, fuzzy
+msgid "%A %d.%-m"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %d.%-m.%Y"
+msgstr "%A %e %B %Y"
+
+#, fuzzy
+msgid "%A %d.%m"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %d.%m.%Y"
+msgstr "%A %e %B %Y"
 
 #, fuzzy
 msgid "%A %d/%-m"
@@ -521,6 +593,34 @@ msgstr ""
 #, fuzzy
 msgid "%a %-d-%b-%Y"
 msgstr "%A %e %B %Y"
+
+#, fuzzy
+msgid "%a %-d. %B %Y"
+msgstr "%A %e %B %Y"
+
+#, fuzzy
+msgid "%a %-d. %b"
+msgstr "%A %e %B %Y"
+
+#, fuzzy
+msgid "%a %-d. %b %Y"
+msgstr "%A %e %B %Y"
+
+#, fuzzy
+msgid "%a %-d.%-m"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %-d.%-m.%Y"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %-d.%m"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %-d.%m.%Y"
+msgstr "%a %e/%m"
 
 #, fuzzy
 msgid "%a %-d/%-m"
@@ -673,6 +773,34 @@ msgstr "%a %e/%m"
 #, fuzzy
 msgid "%a %d-%b-%Y"
 msgstr "%A %e %B %Y"
+
+#, fuzzy
+msgid "%a %d. %B %Y"
+msgstr "%A %e %B %Y"
+
+#, fuzzy
+msgid "%a %d. %b"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%a %d. %b %Y"
+msgstr "%A %e %B %Y"
+
+#, fuzzy
+msgid "%a %d.%-m"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %d.%-m.%Y"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %d.%m"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %d.%m.%Y"
+msgstr "%a %e/%m"
 
 #, fuzzy
 msgid "%a %d/%-m"
@@ -907,8 +1035,32 @@ msgstr "%d-%m"
 msgid "%d-%m"
 msgstr "%d-%m"
 
+#
+#, fuzzy
+msgid "%d. %B %Y"
+msgstr "%d.%B %Y"
+
+msgid "%d. %b"
+msgstr ""
+
+#, fuzzy
+msgid "%d. %b %Y"
+msgstr "%A %d %B"
+
+msgid "%d.%-m"
+msgstr ""
+
+msgid "%d.%-m.%Y"
+msgstr ""
+
 #, python-format
 msgid "%d.%03d GB"
+msgstr ""
+
+msgid "%d.%m"
+msgstr ""
+
+msgid "%d.%m.%Y"
 msgstr ""
 
 msgid "%d/%-m"
@@ -1992,6 +2144,9 @@ msgstr ""
 msgid "Amlogic"
 msgstr ""
 
+msgid "Amlogic remote"
+msgstr ""
+
 #
 msgid "An empty filename is illegal."
 msgstr "Et tomt filnavn er ugyldigt."
@@ -2646,6 +2801,14 @@ msgstr ""
 msgid "Boost green"
 msgstr "grøn"
 
+#
+#, fuzzy
+msgid "Boot time"
+msgstr "Sorter tid"
+
+msgid "Boot time and local time"
+msgstr ""
+
 msgid "Boot to Android image"
 msgstr ""
 
@@ -3156,6 +3319,9 @@ msgid "Choose the front panel display formatting style for dates. 'D' / 'DD' is 
 msgstr ""
 
 msgid "Choose the front panel display formatting style for times. 'H' / 'HH' is the hour for a 24 hour clock, 'h' / 'hh' is the hour for a 12 hour clock, 'mm' is the minutes.  ('HH' and 'hh' have leading zeros for single digit values.) The front panel display will be based on your choice but can be influenced any applicable skin."
+msgstr ""
+
+msgid "Choose the location for crash and debug logs folder."
 msgstr ""
 
 msgid "Choose the location where the EPG data will be stored when the %s %s is shut down. The location must be available at boot time."
@@ -4356,6 +4522,15 @@ msgstr ""
 msgid "Dayname D-Month-Year"
 msgstr ""
 
+msgid "Dayname D. Month Year"
+msgstr ""
+
+msgid "Dayname D.M.Year"
+msgstr ""
+
+msgid "Dayname D.MM.Year"
+msgstr ""
+
 msgid "Dayname D/M/Year"
 msgstr ""
 
@@ -4366,6 +4541,15 @@ msgid "Dayname DD Month Year"
 msgstr ""
 
 msgid "Dayname DD-Month-Year"
+msgstr ""
+
+msgid "Dayname DD. Month Year"
+msgstr ""
+
+msgid "Dayname DD.M.Year"
+msgstr ""
+
+msgid "Dayname DD.MM.Year"
 msgstr ""
 
 msgid "Dayname DD/M/Year"
@@ -4420,6 +4604,9 @@ msgid "Dayname Year/MM/D"
 msgstr ""
 
 msgid "Dayname Year/MM/DD"
+msgstr ""
+
+msgid "Debug log time format *"
 msgstr ""
 
 #
@@ -4637,6 +4824,11 @@ msgstr "Fundne NIMs:"
 #
 #, fuzzy
 msgid "Device"
+msgstr "Kanal info"
+
+#
+#, fuzzy
+msgid "Device id: "
 msgstr "Kanal info"
 
 msgid "Device mounts"
@@ -6459,6 +6651,10 @@ msgstr ""
 msgid "Gibraltar"
 msgstr ""
 
+#, fuzzy
+msgid "Given device id: "
+msgstr "Nuværende enhed"
+
 msgid "Go down the list"
 msgstr "Gå ned af listen"
 
@@ -7576,6 +7772,9 @@ msgstr "Tænd for strøm LED under standby."
 msgid "LED setup"
 msgstr "OSD 3D setup"
 
+msgid "LIRC remote"
+msgstr ""
+
 #
 msgid "LNB"
 msgstr "LNB"
@@ -7789,6 +7988,11 @@ msgstr "Lokalt netværk"
 
 #
 #, fuzzy
+msgid "Local time"
+msgstr "Lokalt netværk"
+
+#
+#, fuzzy
 msgid "Locale"
 msgstr "Lokalt netværk"
 
@@ -7810,7 +8014,7 @@ msgstr "Lås:"
 msgid "Log"
 msgstr ""
 
-msgid "Log python stack trace on spinner?"
+msgid "Log python stack trace on spinner"
 msgstr ""
 
 msgid "Log results to /tmp"
@@ -7818,6 +8022,14 @@ msgstr "Log resultater til /tmp"
 
 msgid "Logfile does not exist anymore"
 msgstr ""
+
+msgid "Logs"
+msgstr ""
+
+#
+#, fuzzy
+msgid "Logs folder location"
+msgstr "<Seneste timer placering>"
 
 msgid "Long filenames"
 msgstr "Lange filnavne"
@@ -8056,6 +8268,11 @@ msgstr "Medie afspiller"
 #
 msgid "Media scanner"
 msgstr "Mediescanner"
+
+#
+#, fuzzy
+msgid "Media service: "
+msgstr "Tilføj kanal"
 
 #
 msgid "Medium is not a writeable DVD!"
@@ -9029,6 +9246,10 @@ msgstr "Nu, kan du bruge Kontrast indstilling og skrue op for Lystyrken på bagg
 msgid "Number of channels shown in channel selection list"
 msgstr "Antal kanaler vist i kanalliste"
 
+#, fuzzy
+msgid "Number of digits in channel number"
+msgstr "Brug hurtigsøgning kanalnumre"
+
 msgid "Number of repeating text on display."
 msgstr "Antal af gentaget tekst på display"
 
@@ -9187,6 +9408,10 @@ msgstr ""
 
 #, fuzzy
 msgid "Open Vision information"
+msgstr "Python version: "
+
+#, fuzzy
+msgid "Open Vision language: "
 msgstr "Python version: "
 
 msgid "Open Vision module: "
@@ -9948,6 +10173,18 @@ msgid "Power LED can be turned on or off here."
 msgstr ""
 
 #, fuzzy
+msgid "Power LED colour state in Deep-Standby"
+msgstr "Luk ned når standby er aktiv"
+
+#, fuzzy
+msgid "Power LED colour state in Standby"
+msgstr "Luk ned når standby er aktiv"
+
+#, fuzzy
+msgid "Power LED colour state when running."
+msgstr "Tænd for strøm LED under standby."
+
+#, fuzzy
 msgid "Power LED state during deep-standby."
 msgstr "Tænd for strøm LED under standby."
 
@@ -9961,9 +10198,6 @@ msgstr ""
 #, fuzzy
 msgid "Power LED state in Standby"
 msgstr "Luk ned når standby er aktiv"
-
-msgid "Power LED state when running."
-msgstr ""
 
 msgid "Power On Display"
 msgstr ""
@@ -10000,6 +10234,10 @@ msgstr "PowerMenu"
 #, fuzzy
 msgid "PowerTimer list"
 msgstr "Vis serviceliste"
+
+#, fuzzy
+msgid "Powerless"
+msgstr "PowerMenu"
 
 #, fuzzy
 msgid "Predefined"
@@ -10784,6 +11022,10 @@ msgstr "Kræv autorisation for http streams"
 #
 msgid "Required medium type:"
 msgstr "Nødvenig medietype"
+
+#, fuzzy
+msgid "Requires internet connection."
+msgstr "Tjek internet forbindelsen"
 
 msgid "Rereading partition table"
 msgstr "Genlæs partitionstabel"
@@ -13977,6 +14219,9 @@ msgstr "Denne DVD RW er allerede formatteret - reformattering vil slette alt ind
 msgid "This allows you change the font size relative to skin size, so 1 increases by 1 point size, and -1 decreases by 1 point size"
 msgstr ""
 
+msgid "This allows you to set the number of digits you can input when selecting channels using number input."
+msgstr ""
+
 #, python-format
 msgid "This field allows you to search an additional symbol rate up to %s."
 msgstr ""
@@ -13994,6 +14239,9 @@ msgid "This is a multitype tuner. Available options depend on the hardware."
 msgstr ""
 
 msgid "This is the order in which DiSEqC commands are sent to the aerial system. The order must correspond exactly with the order the physical devices are arranged along the signal cable (starting from the receiver end)."
+msgstr ""
+
+msgid "This is the prefix of each entry in the debug log. 'boot time' is the number of seconds since the receiver was last booted."
 msgstr ""
 
 msgid "This option allows to reduce the block-noise in the picture. Obviously this is at the cost of the picture's sharpness."
@@ -14967,6 +15215,9 @@ msgid "Updating software catalog"
 msgstr "Opdaterer softwarekatalog"
 
 msgid "Upper case"
+msgstr ""
+
+msgid "Uptime: "
 msgstr ""
 
 msgid "Uruguay"

@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 import os
 import struct
@@ -42,6 +44,11 @@ class StubInfo:
 		return os.path.split(serviceref.getPath())[1]
 	def getLength(self, serviceref):
 		return -1
+	def getFileSize(self, serviceref):
+		try:
+			return os.stat(serviceref.getPath()).st_size
+		except:
+			return -1
 	def getEvent(self, serviceref, *args):
 		return None
 	def isPlayable(self):

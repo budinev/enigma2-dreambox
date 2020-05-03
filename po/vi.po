@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enigma 2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-15 18:09+0430\n"
+"POT-Creation-Date: 2020-04-30 14:08+0430\n"
 "PO-Revision-Date: 2019-11-19 08:58+0700\n"
 "Last-Translator: krong\n"
 "Language-Team: none\n"
@@ -171,6 +171,29 @@ msgstr ""
 msgid "%-d-%b-%Y"
 msgstr ""
 
+#, fuzzy
+msgid "%-d. %B %Y"
+msgstr "%d.%B %Y"
+
+msgid "%-d. %b"
+msgstr ""
+
+#, fuzzy
+msgid "%-d. %b %Y"
+msgstr "%A %d %B"
+
+msgid "%-d.%-m"
+msgstr ""
+
+msgid "%-d.%-m.%Y"
+msgstr ""
+
+msgid "%-d.%m"
+msgstr ""
+
+msgid "%-d.%m.%Y"
+msgstr ""
+
 msgid "%-d/%-m"
 msgstr ""
 
@@ -263,6 +286,30 @@ msgstr "%A %d %B"
 #, fuzzy
 msgid "%A %-d-%B-%Y"
 msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %-d. %B"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %-d. %B %Y"
+msgstr "%A %e %B %Y"
+
+#, fuzzy
+msgid "%A %-d.%-m"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %-d.%-m.%Y"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %-d.%m"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %-d.%m.%Y"
+msgstr "%A %e %B %Y"
 
 #, fuzzy
 msgid "%A %-d/%-m"
@@ -366,6 +413,30 @@ msgstr "%A %d %B"
 #, fuzzy
 msgid "%A %d-%B-%Y"
 msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %d. %B"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %d. %B %Y"
+msgstr "%A %e %B %Y"
+
+#, fuzzy
+msgid "%A %d.%-m"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %d.%-m.%Y"
+msgstr "%A %e %B %Y"
+
+#, fuzzy
+msgid "%A %d.%m"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %d.%m.%Y"
+msgstr "%A %e %B %Y"
 
 #, fuzzy
 msgid "%A %d/%-m"
@@ -512,6 +583,34 @@ msgstr ""
 #, fuzzy
 msgid "%a %-d-%b-%Y"
 msgstr "%a %e %B %Y"
+
+#, fuzzy
+msgid "%a %-d. %B %Y"
+msgstr "%a %e %B %Y"
+
+#, fuzzy
+msgid "%a %-d. %b"
+msgstr "%a %e %B %Y"
+
+#, fuzzy
+msgid "%a %-d. %b %Y"
+msgstr "%a %e %B %Y"
+
+#, fuzzy
+msgid "%a %-d.%-m"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %-d.%-m.%Y"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %-d.%m"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %-d.%m.%Y"
+msgstr "%a %e/%m"
 
 #, fuzzy
 msgid "%a %-d/%-m"
@@ -664,6 +763,34 @@ msgstr "%a %e/%m"
 #, fuzzy
 msgid "%a %d-%b-%Y"
 msgstr "%a %e %B %Y"
+
+#, fuzzy
+msgid "%a %d. %B %Y"
+msgstr "%a %e %B %Y"
+
+#, fuzzy
+msgid "%a %d. %b"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%a %d. %b %Y"
+msgstr "%a %e %B %Y"
+
+#, fuzzy
+msgid "%a %d.%-m"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %d.%-m.%Y"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %d.%m"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %d.%m.%Y"
+msgstr "%a %e/%m"
 
 #, fuzzy
 msgid "%a %d/%-m"
@@ -893,9 +1020,32 @@ msgstr "%d-%m"
 msgid "%d-%m"
 msgstr "%d-%m"
 
+#, fuzzy
+msgid "%d. %B %Y"
+msgstr "%d.%B %Y"
+
+msgid "%d. %b"
+msgstr ""
+
+#, fuzzy
+msgid "%d. %b %Y"
+msgstr "%A %d %B"
+
+msgid "%d.%-m"
+msgstr ""
+
+msgid "%d.%-m.%Y"
+msgstr ""
+
 #, python-format
 msgid "%d.%03d GB"
 msgstr "%d.%03d GB"
+
+msgid "%d.%m"
+msgstr ""
+
+msgid "%d.%m.%Y"
+msgstr ""
 
 msgid "%d/%-m"
 msgstr ""
@@ -1863,6 +2013,9 @@ msgstr "American Samoa"
 msgid "Amlogic"
 msgstr ""
 
+msgid "Amlogic remote"
+msgstr ""
+
 msgid "An empty filename is illegal."
 msgstr "Một tên tệp trống là bất hợp pháp."
 
@@ -2433,6 +2586,14 @@ msgstr "Tăng màu xanh"
 msgid "Boost green"
 msgstr "Tăng màu xanh"
 
+#, fuzzy
+msgid "Boot time"
+msgstr "Sắp xếp thời gian"
+
+#, fuzzy
+msgid "Boot time and local time"
+msgstr "Khởi động hình ảnh Android"
+
 msgid "Boot to Android image"
 msgstr "Khởi động hình ảnh Android"
 
@@ -2905,6 +3066,9 @@ msgid "Choose the front panel display formatting style for dates. 'D' / 'DD' is 
 msgstr ""
 
 msgid "Choose the front panel display formatting style for times. 'H' / 'HH' is the hour for a 24 hour clock, 'h' / 'hh' is the hour for a 12 hour clock, 'mm' is the minutes.  ('HH' and 'hh' have leading zeros for single digit values.) The front panel display will be based on your choice but can be influenced any applicable skin."
+msgstr ""
+
+msgid "Choose the location for crash and debug logs folder."
 msgstr ""
 
 msgid "Choose the location where the EPG data will be stored when the %s %s is shut down. The location must be available at boot time."
@@ -3979,6 +4143,15 @@ msgstr ""
 msgid "Dayname D-Month-Year"
 msgstr ""
 
+msgid "Dayname D. Month Year"
+msgstr ""
+
+msgid "Dayname D.M.Year"
+msgstr ""
+
+msgid "Dayname D.MM.Year"
+msgstr ""
+
 msgid "Dayname D/M/Year"
 msgstr ""
 
@@ -3989,6 +4162,15 @@ msgid "Dayname DD Month Year"
 msgstr ""
 
 msgid "Dayname DD-Month-Year"
+msgstr ""
+
+msgid "Dayname DD. Month Year"
+msgstr ""
+
+msgid "Dayname DD.M.Year"
+msgstr ""
+
+msgid "Dayname DD.MM.Year"
 msgstr ""
 
 msgid "Dayname DD/M/Year"
@@ -4043,6 +4225,9 @@ msgid "Dayname Year/MM/D"
 msgstr ""
 
 msgid "Dayname Year/MM/DD"
+msgstr ""
+
+msgid "Debug log time format *"
 msgstr ""
 
 msgid "Debug to file"
@@ -4232,6 +4417,10 @@ msgstr "Đã phát hiện NIM:"
 
 #, fuzzy
 msgid "Device"
+msgstr "Dịch vụ"
+
+#, fuzzy
+msgid "Device id: "
 msgstr "Dịch vụ"
 
 msgid "Device mounts"
@@ -5845,6 +6034,10 @@ msgstr "Ghana"
 msgid "Gibraltar"
 msgstr "Gibraltar"
 
+#, fuzzy
+msgid "Given device id: "
+msgstr "Thiêt bị hiện tại: "
+
 msgid "Go down the list"
 msgstr "Đi xuống danh sách"
 
@@ -6854,6 +7047,9 @@ msgstr "Bật đèn LED nguồn trong chế độ chờ."
 msgid "LED setup"
 msgstr "Thiết lập OSD 3D"
 
+msgid "LIRC remote"
+msgstr ""
+
 msgid "LNB"
 msgstr "LNB"
 
@@ -7032,6 +7228,10 @@ msgstr "Tải"
 msgid "Local network"
 msgstr "Mạng nội bộ"
 
+#, fuzzy
+msgid "Local time"
+msgstr "Địa phương"
+
 msgid "Locale"
 msgstr "Địa phương"
 
@@ -7050,7 +7250,7 @@ msgstr "Khóa:"
 msgid "Log"
 msgstr ""
 
-msgid "Log python stack trace on spinner?"
+msgid "Log python stack trace on spinner"
 msgstr ""
 
 msgid "Log results to /tmp"
@@ -7058,6 +7258,13 @@ msgstr "Đăng nhập kết quả vào / tmp"
 
 msgid "Logfile does not exist anymore"
 msgstr "Logfile không tồn tại nữa"
+
+msgid "Logs"
+msgstr ""
+
+#, fuzzy
+msgid "Logs folder location"
+msgstr "<Vị trí hẹn giờ cuối>"
 
 msgid "Long filenames"
 msgstr "Tên tập tin dài"
@@ -7265,6 +7472,10 @@ msgstr "Phương tiện truyền thông"
 
 msgid "Media scanner"
 msgstr "Máy quét phương tiện truyền thông"
+
+#, fuzzy
+msgid "Media service: "
+msgstr "Thêm dịch vụ"
 
 msgid "Medium is not a writeable DVD!"
 msgstr "Medium không phải là DVD có thể ghi!"
@@ -8103,6 +8314,10 @@ msgstr "Bây giờ, sử dụng cài đặt độ tương phản để tăng đ�
 msgid "Number of channels shown in channel selection list"
 msgstr "Số lượng kênh được hiển thị trong danh sách lựa chọn kênh"
 
+#, fuzzy
+msgid "Number of digits in channel number"
+msgstr "Sử dụng đánh số kênh fastscan"
+
 msgid "Number of repeating text on display."
 msgstr "Số lượng văn bản lặp lại trên màn hình."
 
@@ -8251,6 +8466,10 @@ msgstr ""
 
 #, fuzzy
 msgid "Open Vision information"
+msgstr "Phiên bản Python: "
+
+#, fuzzy
+msgid "Open Vision language: "
 msgstr "Phiên bản Python: "
 
 msgid "Open Vision module: "
@@ -8896,6 +9115,18 @@ msgid "Power LED can be turned on or off here."
 msgstr ""
 
 #, fuzzy
+msgid "Power LED colour state in Deep-Standby"
+msgstr "Tắt máy khi ở chế độ chờ"
+
+#, fuzzy
+msgid "Power LED colour state in Standby"
+msgstr "Tắt máy khi ở chế độ chờ"
+
+#, fuzzy
+msgid "Power LED colour state when running."
+msgstr "Bật đèn LED nguồn trong chế độ chờ."
+
+#, fuzzy
 msgid "Power LED state during deep-standby."
 msgstr "Bật đèn LED nguồn trong chế độ chờ sâu."
 
@@ -8909,9 +9140,6 @@ msgstr ""
 #, fuzzy
 msgid "Power LED state in Standby"
 msgstr "Tắt máy khi ở chế độ chờ"
-
-msgid "Power LED state when running."
-msgstr ""
 
 #, fuzzy
 msgid "Power On Display"
@@ -8948,6 +9176,10 @@ msgstr "Danh sách nguồn"
 #, fuzzy
 msgid "PowerTimer list"
 msgstr "Hiển thị danh sách dịch vụ"
+
+#, fuzzy
+msgid "Powerless"
+msgstr "Danh sách nguồn"
 
 #, fuzzy
 msgid "Predefined"
@@ -9638,6 +9870,10 @@ msgstr "Yêu cầu xác thực cho các luồng http"
 
 msgid "Required medium type:"
 msgstr "Loại trung bình bắt buộc:"
+
+#, fuzzy
+msgid "Requires internet connection."
+msgstr "Kiểm tra kết nối internet"
 
 msgid "Rereading partition table"
 msgstr "Bảng phân vùng đọc lại"
@@ -12472,6 +12708,9 @@ msgstr "Phương tiện DVD RW này đã được định dạng - định dạn
 msgid "This allows you change the font size relative to skin size, so 1 increases by 1 point size, and -1 decreases by 1 point size"
 msgstr ""
 
+msgid "This allows you to set the number of digits you can input when selecting channels using number input."
+msgstr ""
+
 #, python-format
 msgid "This field allows you to search an additional symbol rate up to %s."
 msgstr "Trường này cho phép bạn tìm kiếm tỷ lệ biểu tượng bổ sung lên đến%s."
@@ -12490,6 +12729,9 @@ msgstr "Đây là một bộ điều chỉnh multitype. Tùy chọn có sẵn ph
 
 msgid "This is the order in which DiSEqC commands are sent to the aerial system. The order must correspond exactly with the order the physical devices are arranged along the signal cable (starting from the receiver end)."
 msgstr "Đây là thứ tự mà các lệnh DiSEqC được gửi đến hệ thống trên không. Thứ tự phải tương ứng chính xác với thứ tự các thiết bị vật lý được sắp xếp dọc theo cáp tín hiệu (bắt đầu từ đầu thu)."
+
+msgid "This is the prefix of each entry in the debug log. 'boot time' is the number of seconds since the receiver was last booted."
+msgstr ""
 
 msgid "This option allows to reduce the block-noise in the picture. Obviously this is at the cost of the picture's sharpness."
 msgstr "Tùy chọn này cho phép giảm nhiễu khối trong ảnh. Rõ ràng đây là cái giá của độ sắc nét của hình ảnh."
@@ -13338,6 +13580,9 @@ msgstr "Cập nhật danh mục phần mềm"
 
 msgid "Upper case"
 msgstr "Chữ hoa"
+
+msgid "Uptime: "
+msgstr ""
 
 msgid "Uruguay"
 msgstr "Uruguay"

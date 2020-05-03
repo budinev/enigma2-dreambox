@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from enigma import Misc_Options, eDVBCIInterfaces, eDVBResourceManager, eGetEnigmaDebugLvl, getBoxType, getBoxBrand
 from Tools.Directories import SCOPE_PLUGINS, fileCheck, fileExists, fileHas, pathExists, resolveFilename
 import os, re
@@ -134,8 +136,8 @@ SystemInfo["CanDownmixAAC"] = fileHas("/proc/stb/audio/aac_choices","downmix")
 SystemInfo["HDMIAudioSource"] = fileCheck("/proc/stb/hdmi/audio_source")
 SystemInfo["BootDevice"] = getBootdevice()
 SystemInfo["LnbPowerAlwaysOn"] = model in ("vusolo4k","vuduo4k","vuultimo4k","vuuno4k","vuuno4kse")
-SystemInfo["SmallFlash"] = fileExists("/etc/smallflash")
-SystemInfo["MiddleFlash"] = fileExists("/etc/middleflash")
+SystemInfo["SmallFlash"] = fileExists("/etc/openvision/smallflash")
+SystemInfo["MiddleFlash"] = fileExists("/etc/openvision/middleflash")
 SystemInfo["HaveCISSL"] = fileCheck("/etc/ssl/certs/customer.pem") and fileCheck("/etc/ssl/certs/device.pem")
 SystemInfo["CanChangeOsdAlpha"] = access("/proc/stb/video/alpha", R_OK) and True or False
 SystemInfo["ScalerSharpness"] = fileExists("/proc/stb/vmpeg/0/pep_scaler_sharpness")
@@ -146,7 +148,7 @@ SystemInfo["NCamIsActive"] = SystemInfo["NCamInstalled"] and fileExists("/tmp/.n
 SystemInfo["OpenVisionModule"] = fileCheck("/proc/stb/info/openvision")
 SystemInfo["OLDE2API"] = model in ("dm800","su980")
 SystemInfo["7segment"] = getDisplayType() == "7segment"
-SystemInfo["CanFadeOut"] = brand not in ("linkdroid","mecool","minix","wetek","hardkernel","dinobot","maxytec","azbox") and model not in ("gbtrio4k","gbip4k","sf8008","sf8008m","cc1","ustym4kpro","beyonwizv2","viper4k","dreamone","hd60","hd61","h9","h9combo","h10","i55plus") and not pathExists("/proc/hisi") and not fileExists("/usr/bin/hihalt")
+SystemInfo["CanFadeOut"] = brand not in ("linkdroid","mecool","minix","wetek","hardkernel","dinobot","maxytec","azbox") and model not in ("gbtrio4k","gbip4k","sf8008","sf8008m","ustym4kpro","beyonwizv2","viper4k","dreamone","hd60","hd61","h9","h9combo","h10","i55plus") and not pathExists("/proc/hisi") and not fileExists("/usr/bin/hihalt")
 SystemInfo["OSDAnimation"] = fileCheck("/proc/stb/fb/animation_mode")
 SystemInfo["RecoveryMode"] = fileCheck("/proc/stb/fp/boot_mode") and model not in ("hd51","h7")
 SystemInfo["AndroidMode"] =  SystemInfo["RecoveryMode"] and model == "multibox" or brand in ("hypercube","linkdroid","mecool","wetek") or model == "dreamone"
@@ -168,10 +170,10 @@ SystemInfo["GigaBlueQuad"] = model in ("gbquad","gbquadplus")
 SystemInfo["AmlogicFamily"] = brand in ("linkdroid","mecool","minix","wetek","hardkernel") or model == "dreamone"
 SystemInfo["VFDDelay"] = model in ("sf4008","beyonwizu4")
 SystemInfo["VFDRepeats"] = brand != "ixuss" and getDisplayType() != "7segment"
-SystemInfo["HiSilicon"] = brand in ("dinobot","maxytec") or model in ("gbtrio4k","gbip4k","sf8008","sf8008m","cc1","ustym4kpro","beyonwizv2","viper4k","hd60","hd61","h9","h9combo","h10","i55plus") or pathExists("/proc/hisi") or fileExists("/usr/bin/hihalt")
+SystemInfo["HiSilicon"] = brand in ("dinobot","maxytec") or model in ("gbtrio4k","gbip4k","sf8008","sf8008m","ustym4kpro","beyonwizv2","viper4k","hd60","hd61","h9","h9combo","h10","i55plus") or pathExists("/proc/hisi") or fileExists("/usr/bin/hihalt")
 SystemInfo["FirstCheckModel"] = model in ("tmtwin4k","mbmicrov2","revo4k","force3uhd","mbmicro","e4hd","e4hdhybrid","valalinux","lunix","tmnanom3","purehd","force2nano","purehdse") or brand in ("linkdroid","wetek")
 SystemInfo["SecondCheckModel"] = model in ("osninopro","osnino","osninoplus","dm7020hd","dm7020hdv2","9910lx","9911lx","9920lx","tmnanose","tmnanoseplus","tmnanosem2","tmnanosem2plus","tmnanosecombo","force2plus","force2","force2se","optimussos","fusionhd","fusionhdse","force2plushv") or brand == "ixuss"
-SystemInfo["ThirdCheckModel"] = model in ("gbtrio4k","gbip4k","sf8008","sf8008m","cc1","ustym4kpro","beyonwizv2","viper4k")
+SystemInfo["ThirdCheckModel"] = model in ("gbtrio4k","gbip4k","sf8008","sf8008m","ustym4kpro","beyonwizv2","viper4k")
 SystemInfo["DifferentLCDSettings"] = model in ("spycat4kmini","osmega")
 SystemInfo["CanBTAudio"] = fileCheck("/proc/stb/audio/btaudio")
 SystemInfo["CanBTAudioDelay"] = fileCheck("/proc/stb/audio/btaudio_delay")

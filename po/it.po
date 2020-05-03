@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenPLi-enigma2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-15 18:09+0430\n"
+"POT-Creation-Date: 2020-04-30 14:08+0430\n"
 "PO-Revision-Date: 2018-05-22 13:54+0200\n"
 "Last-Translator: Gringo <openpli@tiscali.it>\n"
 "Language-Team: www.linsat.net <spaeleus@croci.org>\n"
@@ -178,6 +178,29 @@ msgstr ""
 msgid "%-d-%b-%Y"
 msgstr ""
 
+#, fuzzy
+msgid "%-d. %B %Y"
+msgstr "%d.%B %Y"
+
+msgid "%-d. %b"
+msgstr ""
+
+#, fuzzy
+msgid "%-d. %b %Y"
+msgstr "%A %d %B"
+
+msgid "%-d.%-m"
+msgstr ""
+
+msgid "%-d.%-m.%Y"
+msgstr ""
+
+msgid "%-d.%m"
+msgstr ""
+
+msgid "%-d.%m.%Y"
+msgstr ""
+
 msgid "%-d/%-m"
 msgstr ""
 
@@ -270,6 +293,30 @@ msgstr "%A %d %B"
 #, fuzzy
 msgid "%A %-d-%B-%Y"
 msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %-d. %B"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %-d. %B %Y"
+msgstr "%A %e %B %Y"
+
+#, fuzzy
+msgid "%A %-d.%-m"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %-d.%-m.%Y"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %-d.%m"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %-d.%m.%Y"
+msgstr "%A %e %B %Y"
 
 #, fuzzy
 msgid "%A %-d/%-m"
@@ -373,6 +420,30 @@ msgstr "%A %d %B"
 #, fuzzy
 msgid "%A %d-%B-%Y"
 msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %d. %B"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %d. %B %Y"
+msgstr "%A %e %B %Y"
+
+#, fuzzy
+msgid "%A %d.%-m"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %d.%-m.%Y"
+msgstr "%A %e %B %Y"
+
+#, fuzzy
+msgid "%A %d.%m"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %d.%m.%Y"
+msgstr "%A %e %B %Y"
 
 #, fuzzy
 msgid "%A %d/%-m"
@@ -519,6 +590,34 @@ msgstr ""
 #, fuzzy
 msgid "%a %-d-%b-%Y"
 msgstr "%a %e %B %Y"
+
+#, fuzzy
+msgid "%a %-d. %B %Y"
+msgstr "%a %e %B %Y"
+
+#, fuzzy
+msgid "%a %-d. %b"
+msgstr "%a %e %B %Y"
+
+#, fuzzy
+msgid "%a %-d. %b %Y"
+msgstr "%a %e %B %Y"
+
+#, fuzzy
+msgid "%a %-d.%-m"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %-d.%-m.%Y"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %-d.%m"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %-d.%m.%Y"
+msgstr "%a %e/%m"
 
 #, fuzzy
 msgid "%a %-d/%-m"
@@ -671,6 +770,34 @@ msgstr "%a %e/%m"
 #, fuzzy
 msgid "%a %d-%b-%Y"
 msgstr "%a %e %B %Y"
+
+#, fuzzy
+msgid "%a %d. %B %Y"
+msgstr "%a %e %B %Y"
+
+#, fuzzy
+msgid "%a %d. %b"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%a %d. %b %Y"
+msgstr "%a %e %B %Y"
+
+#, fuzzy
+msgid "%a %d.%-m"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %d.%-m.%Y"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %d.%m"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %d.%m.%Y"
+msgstr "%a %e/%m"
 
 #, fuzzy
 msgid "%a %d/%-m"
@@ -900,9 +1027,32 @@ msgstr "%d-%m"
 msgid "%d-%m"
 msgstr "%d-%m"
 
+#, fuzzy
+msgid "%d. %B %Y"
+msgstr "%d.%B %Y"
+
+msgid "%d. %b"
+msgstr ""
+
+#, fuzzy
+msgid "%d. %b %Y"
+msgstr "%A %d %B"
+
+msgid "%d.%-m"
+msgstr ""
+
+msgid "%d.%-m.%Y"
+msgstr ""
+
 #, python-format
 msgid "%d.%03d GB"
 msgstr "%d.%03d GB"
+
+msgid "%d.%m"
+msgstr ""
+
+msgid "%d.%m.%Y"
+msgstr ""
 
 msgid "%d/%-m"
 msgstr ""
@@ -1870,6 +2020,9 @@ msgstr "Samoa americane"
 msgid "Amlogic"
 msgstr ""
 
+msgid "Amlogic remote"
+msgstr ""
+
 msgid "An empty filename is illegal."
 msgstr "Nome di file vuoto non consentito."
 
@@ -2444,6 +2597,14 @@ msgstr "Intensificare il blu"
 msgid "Boost green"
 msgstr "Intensificare il verde"
 
+#, fuzzy
+msgid "Boot time"
+msgstr "Ordine per orario"
+
+#, fuzzy
+msgid "Boot time and local time"
+msgstr "Avvia l'immagine Android"
+
 msgid "Boot to Android image"
 msgstr "Avvia l'immagine Android"
 
@@ -2901,6 +3062,9 @@ msgid "Choose the front panel display formatting style for dates. 'D' / 'DD' is 
 msgstr ""
 
 msgid "Choose the front panel display formatting style for times. 'H' / 'HH' is the hour for a 24 hour clock, 'h' / 'hh' is the hour for a 12 hour clock, 'mm' is the minutes.  ('HH' and 'hh' have leading zeros for single digit values.) The front panel display will be based on your choice but can be influenced any applicable skin."
+msgstr ""
+
+msgid "Choose the location for crash and debug logs folder."
 msgstr ""
 
 msgid "Choose the location where the EPG data will be stored when the %s %s is shut down. The location must be available at boot time."
@@ -3975,6 +4139,15 @@ msgstr ""
 msgid "Dayname D-Month-Year"
 msgstr ""
 
+msgid "Dayname D. Month Year"
+msgstr ""
+
+msgid "Dayname D.M.Year"
+msgstr ""
+
+msgid "Dayname D.MM.Year"
+msgstr ""
+
 msgid "Dayname D/M/Year"
 msgstr ""
 
@@ -3985,6 +4158,15 @@ msgid "Dayname DD Month Year"
 msgstr ""
 
 msgid "Dayname DD-Month-Year"
+msgstr ""
+
+msgid "Dayname DD. Month Year"
+msgstr ""
+
+msgid "Dayname DD.M.Year"
+msgstr ""
+
+msgid "Dayname DD.MM.Year"
 msgstr ""
 
 msgid "Dayname DD/M/Year"
@@ -4039,6 +4221,9 @@ msgid "Dayname Year/MM/D"
 msgstr ""
 
 msgid "Dayname Year/MM/DD"
+msgstr ""
+
+msgid "Debug log time format *"
 msgstr ""
 
 msgid "Debug to file"
@@ -4228,6 +4413,10 @@ msgstr "Sintonizzatori rilevati:"
 
 #, fuzzy
 msgid "Device"
+msgstr "Informazioni sul canale"
+
+#, fuzzy
+msgid "Device id: "
 msgstr "Informazioni sul canale"
 
 msgid "Device mounts"
@@ -5840,6 +6029,10 @@ msgstr "Ghana"
 msgid "Gibraltar"
 msgstr "Gibilterra"
 
+#, fuzzy
+msgid "Given device id: "
+msgstr "Dispositivo attuale: "
+
 msgid "Go down the list"
 msgstr "Scorrere l'elenco in giù"
 
@@ -6851,6 +7044,9 @@ msgstr "Attivare il LED di accensione durante la sospensione."
 msgid "LED setup"
 msgstr "OSD 3D"
 
+msgid "LIRC remote"
+msgstr ""
+
 msgid "LNB"
 msgstr "LNB"
 
@@ -7029,6 +7225,10 @@ msgstr "Caricare"
 msgid "Local network"
 msgstr "Rete locale"
 
+#, fuzzy
+msgid "Local time"
+msgstr "Locale"
+
 msgid "Locale"
 msgstr "Locale"
 
@@ -7047,7 +7247,7 @@ msgstr "Segnale:"
 msgid "Log"
 msgstr ""
 
-msgid "Log python stack trace on spinner?"
+msgid "Log python stack trace on spinner"
 msgstr ""
 
 msgid "Log results to /tmp"
@@ -7055,6 +7255,13 @@ msgstr "Salvare i registri su /tmp"
 
 msgid "Logfile does not exist anymore"
 msgstr "Il file di registro non è più presente"
+
+msgid "Logs"
+msgstr ""
+
+#, fuzzy
+msgid "Logs folder location"
+msgstr "<Percorso dell'ultimo timer>"
 
 msgid "Long filenames"
 msgstr "Nomi file lunghi"
@@ -7262,6 +7469,10 @@ msgstr "Lettore multimediale"
 
 msgid "Media scanner"
 msgstr "Ricerca multimediale"
+
+#, fuzzy
+msgid "Media service: "
+msgstr "Aggiungere un canale"
 
 msgid "Medium is not a writeable DVD!"
 msgstr "Il supporto non è un DVD masterizzabile!"
@@ -8098,6 +8309,10 @@ msgstr "Ora utilizzare la regolazione del contrasto per aumentare il più possib
 msgid "Number of channels shown in channel selection list"
 msgstr "Numero canali da visualizzare nella lista di selezione"
 
+#, fuzzy
+msgid "Number of digits in channel number"
+msgstr "Utilizzare i numeri dei canali della ricerca rapida"
+
 msgid "Number of repeating text on display."
 msgstr "Numero di ripetizioni del testo sullo schermo."
 
@@ -8246,6 +8461,10 @@ msgstr ""
 
 #, fuzzy
 msgid "Open Vision information"
+msgstr "Versione Python: "
+
+#, fuzzy
+msgid "Open Vision language: "
 msgstr "Versione Python: "
 
 msgid "Open Vision module: "
@@ -8889,6 +9108,18 @@ msgid "Power LED can be turned on or off here."
 msgstr ""
 
 #, fuzzy
+msgid "Power LED colour state in Deep-Standby"
+msgstr "Spegnere se messo in sospensione"
+
+#, fuzzy
+msgid "Power LED colour state in Standby"
+msgstr "Spegnere se messo in sospensione"
+
+#, fuzzy
+msgid "Power LED colour state when running."
+msgstr "Attivare il LED di accensione durante la sospensione."
+
+#, fuzzy
 msgid "Power LED state during deep-standby."
 msgstr "Accendere il LED durante lo standby."
 
@@ -8902,9 +9133,6 @@ msgstr ""
 #, fuzzy
 msgid "Power LED state in Standby"
 msgstr "Spegnere se messo in sospensione"
-
-msgid "Power LED state when running."
-msgstr ""
 
 #, fuzzy
 msgid "Power On Display"
@@ -8941,6 +9169,10 @@ msgstr "Menu Accensione"
 #, fuzzy
 msgid "PowerTimer list"
 msgstr "Mostrare la lista canali"
+
+#, fuzzy
+msgid "Powerless"
+msgstr "Menu Accensione"
 
 #, fuzzy
 msgid "Predefined"
@@ -9630,6 +9862,10 @@ msgstr "Autenticazione richiesta per i flussi http"
 
 msgid "Required medium type:"
 msgstr "Tipo di supporto richiesto:"
+
+#, fuzzy
+msgid "Requires internet connection."
+msgstr "Verificare la connessione a Internet"
 
 msgid "Rereading partition table"
 msgstr "Rilettura della tabella delle partizioni in corso..."
@@ -12479,6 +12715,9 @@ msgstr "Il DVD-RW è già formattato - una nuova formattazione cancellerà tutto
 msgid "This allows you change the font size relative to skin size, so 1 increases by 1 point size, and -1 decreases by 1 point size"
 msgstr ""
 
+msgid "This allows you to set the number of digits you can input when selecting channels using number input."
+msgstr ""
+
 #, python-format
 msgid "This field allows you to search an additional symbol rate up to %s."
 msgstr "Questo campo consente di ricercare dei symbol rate aggiuntivi fino a %s."
@@ -12497,6 +12736,9 @@ msgstr ""
 
 msgid "This is the order in which DiSEqC commands are sent to the aerial system. The order must correspond exactly with the order the physical devices are arranged along the signal cable (starting from the receiver end)."
 msgstr "Questo è l'ordine secondo il quale i comandi DiSEqC vengono inviati nell'impianto. L'ordine deve corrispondere esattamente all'ordine in cui i dispositivi fisici sono installati lungo il cavo di segnale (a partire dal lato ricevitore)."
+
+msgid "This is the prefix of each entry in the debug log. 'boot time' is the number of seconds since the receiver was last booted."
+msgstr ""
 
 msgid "This option allows to reduce the block-noise in the picture. Obviously this is at the cost of the picture's sharpness."
 msgstr "Questa opzione consente di ridurre il disturbo a blocchi nell'immagine. Ciò comporterà purtroppo una riduzione della nitidezza dell'immagine."
@@ -13348,6 +13590,9 @@ msgid "Updating software catalog"
 msgstr "Aggiornamento del catalogo software in corso..."
 
 msgid "Upper case"
+msgstr ""
+
+msgid "Uptime: "
 msgstr ""
 
 msgid "Uruguay"

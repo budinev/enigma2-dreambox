@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PLi enigma2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-15 18:09+0430\n"
+"POT-Creation-Date: 2020-04-30 14:08+0430\n"
 "PO-Revision-Date: 2020-04-09 22:41+0300\n"
 "Last-Translator: Audronis Grincevicius <adga45@gmail.com>\n"
 "Language-Team: Adga (C) <adga45@gmail.com>\n"
@@ -171,6 +171,29 @@ msgstr "%b-%-d"
 msgid "%-d-%b-%Y"
 msgstr "%Y-%b-%-d"
 
+#, fuzzy
+msgid "%-d. %B %Y"
+msgstr "%Y %B %-d"
+
+msgid "%-d. %b"
+msgstr ""
+
+#, fuzzy
+msgid "%-d. %b %Y"
+msgstr "%Y %b %-d"
+
+msgid "%-d.%-m"
+msgstr ""
+
+msgid "%-d.%-m.%Y"
+msgstr ""
+
+msgid "%-d.%m"
+msgstr ""
+
+msgid "%-d.%m.%Y"
+msgstr ""
+
 msgid "%-d/%-m"
 msgstr "%-m.%-d"
 
@@ -260,6 +283,30 @@ msgstr "%B %-d, %A"
 msgid "%A %-d-%B-%Y"
 msgstr "%Y-%B-%-d, %A"
 
+#, fuzzy
+msgid "%A %-d. %B"
+msgstr "%B %-d, %A"
+
+#, fuzzy
+msgid "%A %-d. %B %Y"
+msgstr "%Y %B %-d, %A"
+
+#, fuzzy
+msgid "%A %-d.%-m"
+msgstr "%-m/%-d %A"
+
+#, fuzzy
+msgid "%A %-d.%-m.%Y"
+msgstr "%Y/%-m/%-d %A"
+
+#, fuzzy
+msgid "%A %-d.%m"
+msgstr "%m/%-d %A"
+
+#, fuzzy
+msgid "%A %-d.%m.%Y"
+msgstr "%Y/%m/%-d %A"
+
 msgid "%A %-d/%-m"
 msgstr "%-m/%-d %A"
 
@@ -343,6 +390,30 @@ msgstr "%B-%d %A"
 
 msgid "%A %d-%B-%Y"
 msgstr "%Y-%B-%d, %A"
+
+#, fuzzy
+msgid "%A %d. %B"
+msgstr "%B %e, %A"
+
+#, fuzzy
+msgid "%A %d. %B %Y"
+msgstr "%Y %B %d %A"
+
+#, fuzzy
+msgid "%A %d.%-m"
+msgstr "%-m/%d %A"
+
+#, fuzzy
+msgid "%A %d.%-m.%Y"
+msgstr "%Y/%-m/%d %A"
+
+#, fuzzy
+msgid "%A %d.%m"
+msgstr "%m/%d %A"
+
+#, fuzzy
+msgid "%A %d.%m.%Y"
+msgstr "%Y/%m/%d %A"
 
 msgid "%A %d/%-m"
 msgstr "%-m/%d %A"
@@ -473,6 +544,34 @@ msgstr "%b-%-d %a"
 msgid "%a %-d-%b-%Y"
 msgstr "%Y %B %e, %A"
 
+#, fuzzy
+msgid "%a %-d. %B %Y"
+msgstr "%Y %B %-d %a"
+
+#, fuzzy
+msgid "%a %-d. %b"
+msgstr "%b %-d %a"
+
+#, fuzzy
+msgid "%a %-d. %b %Y"
+msgstr "%Y %B %e, %A"
+
+#, fuzzy
+msgid "%a %-d.%-m"
+msgstr "%a %-d/%-m"
+
+#, fuzzy
+msgid "%a %-d.%-m.%Y"
+msgstr "%Y/%-m/%-d %a"
+
+#, fuzzy
+msgid "%a %-d.%m"
+msgstr "%a %-d/%m"
+
+#, fuzzy
+msgid "%a %-d.%m.%Y"
+msgstr "%Y/%m/%-d %a"
+
 msgid "%a %-d/%-m"
 msgstr "%a %-d/%-m"
 
@@ -589,6 +688,34 @@ msgstr "%a %d-%b"
 
 msgid "%a %d-%b-%Y"
 msgstr "%a %d-%b-%Y"
+
+#, fuzzy
+msgid "%a %d. %B %Y"
+msgstr "%a %d %B %Y"
+
+#, fuzzy
+msgid "%a %d. %b"
+msgstr "%a %d %b"
+
+#, fuzzy
+msgid "%a %d. %b %Y"
+msgstr "%a %d %b %Y"
+
+#, fuzzy
+msgid "%a %d.%-m"
+msgstr "%a %d/%-m"
+
+#, fuzzy
+msgid "%a %d.%-m.%Y"
+msgstr "%Y/%-m/%d %a"
+
+#, fuzzy
+msgid "%a %d.%m"
+msgstr "%a %d/%m"
+
+#, fuzzy
+msgid "%a %d.%m.%Y"
+msgstr "%a %d/%m/%Y"
 
 msgid "%a %d/%-m"
 msgstr "%a %d/%-m"
@@ -810,9 +937,32 @@ msgstr "%Y-%b-%d"
 msgid "%d-%m"
 msgstr "%m-%d"
 
+#, fuzzy
+msgid "%d. %B %Y"
+msgstr "%Y %B %e, %A"
+
+msgid "%d. %b"
+msgstr ""
+
+#, fuzzy
+msgid "%d. %b %Y"
+msgstr "%d %b %Y"
+
+msgid "%d.%-m"
+msgstr ""
+
+msgid "%d.%-m.%Y"
+msgstr ""
+
 #, python-format
 msgid "%d.%03d GB"
 msgstr "%d.%03d GB"
+
+msgid "%d.%m"
+msgstr ""
+
+msgid "%d.%m.%Y"
+msgstr ""
 
 msgid "%d/%-m"
 msgstr "%d/%-m"
@@ -1741,6 +1891,10 @@ msgstr "Amerikos Samoa"
 msgid "Amlogic"
 msgstr "Amlogic"
 
+#, fuzzy
+msgid "Amlogic remote"
+msgstr "Amlogic"
+
 msgid "An empty filename is illegal."
 msgstr "Tuščias failo pavadinimas negalimas."
 
@@ -2293,6 +2447,14 @@ msgstr "Pridėti mėlynos"
 msgid "Boost green"
 msgstr "Pridėti žalios"
 
+#, fuzzy
+msgid "Boot time"
+msgstr "Įkrovimo laikas"
+
+#, fuzzy
+msgid "Boot time and local time"
+msgstr "Įdiegti Android atvaizdą"
+
 msgid "Boot to Android image"
 msgstr "Įdiegti Android atvaizdą"
 
@@ -2753,6 +2915,9 @@ msgstr "Pasirinkite priekinio ekranėlio rodomą datos formavimo stilių. 'D' / 
 
 msgid "Choose the front panel display formatting style for times. 'H' / 'HH' is the hour for a 24 hour clock, 'h' / 'hh' is the hour for a 12 hour clock, 'mm' is the minutes.  ('HH' and 'hh' have leading zeros for single digit values.) The front panel display will be based on your choice but can be influenced any applicable skin."
 msgstr "Pasirinkite priekinio ekranėlio rodomą laiko formavimo stilių. 'H' / 'HH' yra valandos 24 val. formate, 'h' / 'hh' yra valandos 12 val. formate. 'mm' yra minutės ir 'ss' yra sekundės.  ('HH' ir 'hh' prieš vieno skaitmens skaičius įrašomi nuliai.)Bus rodoma taip, kaip pasirinksite, bet gali būti įtakojamas ir naudojamos aplinkos temos."
+
+msgid "Choose the location for crash and debug logs folder."
+msgstr ""
 
 msgid "Choose the location where the EPG data will be stored when the %s %s is shut down. The location must be available at boot time."
 msgstr "Pasirinkite vietą, kur bus saugomi EPG duomenys, kai %s %s išjungtas. Vieta turi būti prieinama įkrovos metu."
@@ -3781,6 +3946,18 @@ msgstr "Metai Mėnuo D SavDiena"
 msgid "Dayname D-Month-Year"
 msgstr "Metai-Mėnuo-D SavDiena"
 
+#, fuzzy
+msgid "Dayname D. Month Year"
+msgstr "Metai Mėnuo D SavDiena"
+
+#, fuzzy
+msgid "Dayname D.M.Year"
+msgstr "Metai/M/D SavDiena"
+
+#, fuzzy
+msgid "Dayname D.MM.Year"
+msgstr "Metai/MM/D SavDiena"
+
 msgid "Dayname D/M/Year"
 msgstr "Metai/M/D SavDiena"
 
@@ -3792,6 +3969,18 @@ msgstr "Metai Mėnuo DD SavDiena"
 
 msgid "Dayname DD-Month-Year"
 msgstr "Metai-Mėnuo-DD SavDiena"
+
+#, fuzzy
+msgid "Dayname DD. Month Year"
+msgstr "Metai Mėnuo DD SavDiena"
+
+#, fuzzy
+msgid "Dayname DD.M.Year"
+msgstr "Metai/M/DD SavDiena"
+
+#, fuzzy
+msgid "Dayname DD.MM.Year"
+msgstr "Metai/MM/DD SavDiena"
 
 msgid "Dayname DD/M/Year"
 msgstr "Metai/M/DD SavDiena"
@@ -3846,6 +4035,9 @@ msgstr "Metai/MM/D SavDiena"
 
 msgid "Dayname Year/MM/DD"
 msgstr "Metai/MM/DD SavDiena"
+
+msgid "Debug log time format *"
+msgstr ""
 
 msgid "Debug to file"
 msgstr "Sukurti klaidų žurnalo failą"
@@ -4028,6 +4220,10 @@ msgid "Detected tuners:"
 msgstr "Aptikti imtuvai:"
 
 msgid "Device"
+msgstr "Įrenginys"
+
+#, fuzzy
+msgid "Device id: "
 msgstr "Įrenginys"
 
 msgid "Device mounts"
@@ -5570,6 +5766,10 @@ msgstr "Gana"
 msgid "Gibraltar"
 msgstr "Gibraltaras"
 
+#, fuzzy
+msgid "Given device id: "
+msgstr "Dabartinis įrenginys: "
+
 msgid "Go down the list"
 msgstr "Sąrašu žemyn"
 
@@ -6538,6 +6738,9 @@ msgstr "LED spalva budėjimo režimu"
 msgid "LED setup"
 msgstr "LED nustatymas"
 
+msgid "LIRC remote"
+msgstr ""
+
 msgid "LNB"
 msgstr "LNB konverteris"
 
@@ -6712,6 +6915,10 @@ msgstr "Įkeltas"
 msgid "Local network"
 msgstr "Vietinis tinklas"
 
+#, fuzzy
+msgid "Local time"
+msgstr "Vieta"
+
 msgid "Locale"
 msgstr "Vieta"
 
@@ -6730,7 +6937,8 @@ msgstr "Fiksuota:"
 msgid "Log"
 msgstr "Žurnalas"
 
-msgid "Log python stack trace on spinner?"
+#, fuzzy
+msgid "Log python stack trace on spinner"
 msgstr "Prisijungti python steką ant suktuko?"
 
 msgid "Log results to /tmp"
@@ -6738,6 +6946,13 @@ msgstr "Žurnalo rezultatus į/tmp"
 
 msgid "Logfile does not exist anymore"
 msgstr "Failo žurnalo daugiau nėra"
+
+msgid "Logs"
+msgstr ""
+
+#, fuzzy
+msgid "Logs folder location"
+msgstr "<Paskutinio laikmačio vieta>"
 
 msgid "Long filenames"
 msgstr "Ilgi failų pavadinimai"
@@ -6940,6 +7155,10 @@ msgstr "Media grotuvas"
 
 msgid "Media scanner"
 msgstr "Media failų paieška"
+
+#, fuzzy
+msgid "Media service: "
+msgstr "Pridėti kanalą"
 
 msgid "Medium is not a writeable DVD!"
 msgstr "Tai neįrašomas DVD!"
@@ -7730,6 +7949,10 @@ msgstr "Dabar, atlikite kontrasto nustatymą, kad padidinti fono šviesumą tiek
 msgid "Number of channels shown in channel selection list"
 msgstr "Kanalų skaičius kanalų pasirinkimo sąraše"
 
+#, fuzzy
+msgid "Number of digits in channel number"
+msgstr "Naudokite greitos paieškos kanalų numeravimą"
+
 msgid "Number of repeating text on display."
 msgstr "Pasikartojančio teksto skaičius ekrane."
 
@@ -7871,6 +8094,10 @@ msgstr "Open Vision enigma2 atvaizdas"
 
 msgid "Open Vision information"
 msgstr "Open Vision informacija"
+
+#, fuzzy
+msgid "Open Vision language: "
+msgstr "Open Vision modulis: "
 
 msgid "Open Vision module: "
 msgstr "Open Vision modulis: "
@@ -8495,6 +8722,18 @@ msgstr "Pozicionieriaus sąrankos žurnalas"
 msgid "Power LED can be turned on or off here."
 msgstr "Galima įjungti arba išjungti maitinimo LED indikatorių."
 
+#, fuzzy
+msgid "Power LED colour state in Deep-Standby"
+msgstr "Maitinimo LED būsena giliame laukimo režime"
+
+#, fuzzy
+msgid "Power LED colour state in Standby"
+msgstr "Maitinimo LED būsena budėjimo režime"
+
+#, fuzzy
+msgid "Power LED colour state when running."
+msgstr "Maitinimo LED būsena veikimo režime."
+
 msgid "Power LED state during deep-standby."
 msgstr "Maitinimo LED būklė giliame budėjime/budėjimo režime."
 
@@ -8506,9 +8745,6 @@ msgstr "Maitinimo LED būsena giliame laukimo režime"
 
 msgid "Power LED state in Standby"
 msgstr "Maitinimo LED būsena budėjimo režime"
-
-msgid "Power LED state when running."
-msgstr "Maitinimo LED būsena veikimo režime."
 
 msgid "Power On Display"
 msgstr "Maitinimas ekrane"
@@ -8542,6 +8778,10 @@ msgstr "Išjungimo meniu"
 
 msgid "PowerTimer list"
 msgstr "Įjungimo laikmačio sąrašas"
+
+#, fuzzy
+msgid "Powerless"
+msgstr "Išjungimo meniu"
 
 msgid "Predefined"
 msgstr "Pageidautinas"
@@ -9207,6 +9447,10 @@ msgstr "Http srautams reikalauti autentikacijos"
 
 msgid "Required medium type:"
 msgstr "Reikalingas laikmenos tipas:"
+
+#, fuzzy
+msgid "Requires internet connection."
+msgstr "Patikrinkite interneto ryšį"
 
 msgid "Rereading partition table"
 msgstr "Skaidinių lentelė nuskaitoma iš naujo"
@@ -11946,6 +12190,9 @@ msgstr "Šis DVD RW diskas jau yra suformatuotas - formatavimas iš naujo, ištr
 msgid "This allows you change the font size relative to skin size, so 1 increases by 1 point size, and -1 decreases by 1 point size"
 msgstr "Nustatykite šrifto dydį lyginant su temos dydžiu, todėl 1 padidėja 1 dydžio tašku ir -1 sumažėja 1 dydžio tašku"
 
+msgid "This allows you to set the number of digits you can input when selecting channels using number input."
+msgstr ""
+
 #, python-format
 msgid "This field allows you to search an additional symbol rate up to %s."
 msgstr "Šis laukas leidžia jums ieškoti papildomų simbolių spartos iki %s."
@@ -11964,6 +12211,9 @@ msgstr "Tai kelių tipų imtuvas. Galimos parinktys priklauso nuo aparatūros."
 
 msgid "This is the order in which DiSEqC commands are sent to the aerial system. The order must correspond exactly with the order the physical devices are arranged along the signal cable (starting from the receiver end)."
 msgstr "Tai yra tvarka, kuria DiSEqC komandos siunčiamos į antenos sistemą. Užsakymas turi tiksliai atitikti tvarką, pagal kurią fiziniai įrenginiai išdėstomi palei signalo kabelį (pradedant imtuvo pabaigos)."
+
+msgid "This is the prefix of each entry in the debug log. 'boot time' is the number of seconds since the receiver was last booted."
+msgstr ""
 
 msgid "This option allows to reduce the block-noise in the picture. Obviously this is at the cost of the picture's sharpness."
 msgstr "Ši parinktis leidžia sumažinti matomo vaizdo \"kvadratavimosi\" triukšmus. Žinoma, tai pasiekiama bendro vaizdo ryškumo sumažėjimo kaina."
@@ -12783,6 +13033,9 @@ msgstr "Atnaujinamas programinės įrangos katalogas"
 
 msgid "Upper case"
 msgstr "Didžiosios raidės"
+
+msgid "Uptime: "
+msgstr ""
 
 msgid "Uruguay"
 msgstr "Urugvajus"

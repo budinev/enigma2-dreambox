@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enigma2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-15 18:09+0430\n"
+"POT-Creation-Date: 2020-04-30 14:08+0430\n"
 "PO-Revision-Date: 2020-03-23 11:15+0100\n"
 "Last-Translator: Željko <zeljko2@hi.ht.hr>\n"
 "Language-Team: Željko\n"
@@ -171,6 +171,29 @@ msgstr ""
 msgid "%-d-%b-%Y"
 msgstr ""
 
+#, fuzzy
+msgid "%-d. %B %Y"
+msgstr "%d.%B %Y"
+
+msgid "%-d. %b"
+msgstr ""
+
+#, fuzzy
+msgid "%-d. %b %Y"
+msgstr "%A %d %B"
+
+msgid "%-d.%-m"
+msgstr ""
+
+msgid "%-d.%-m.%Y"
+msgstr ""
+
+msgid "%-d.%m"
+msgstr ""
+
+msgid "%-d.%m.%Y"
+msgstr ""
+
 msgid "%-d/%-m"
 msgstr ""
 
@@ -263,6 +286,30 @@ msgstr "%A %d %B"
 #, fuzzy
 msgid "%A %-d-%B-%Y"
 msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %-d. %B"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %-d. %B %Y"
+msgstr "%A %e %B %Y"
+
+#, fuzzy
+msgid "%A %-d.%-m"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %-d.%-m.%Y"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %-d.%m"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %-d.%m.%Y"
+msgstr "%A %e %B %Y"
 
 #, fuzzy
 msgid "%A %-d/%-m"
@@ -366,6 +413,30 @@ msgstr "%A %d %B"
 #, fuzzy
 msgid "%A %d-%B-%Y"
 msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %d. %B"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %d. %B %Y"
+msgstr "%A %e %B %Y"
+
+#, fuzzy
+msgid "%A %d.%-m"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %d.%-m.%Y"
+msgstr "%A %e %B %Y"
+
+#, fuzzy
+msgid "%A %d.%m"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%A %d.%m.%Y"
+msgstr "%A %e %B %Y"
 
 #, fuzzy
 msgid "%A %d/%-m"
@@ -512,6 +583,34 @@ msgstr ""
 #, fuzzy
 msgid "%a %-d-%b-%Y"
 msgstr "%a %e %B %Y"
+
+#, fuzzy
+msgid "%a %-d. %B %Y"
+msgstr "%a %e %B %Y"
+
+#, fuzzy
+msgid "%a %-d. %b"
+msgstr "%a %e %B %Y"
+
+#, fuzzy
+msgid "%a %-d. %b %Y"
+msgstr "%a %e %B %Y"
+
+#, fuzzy
+msgid "%a %-d.%-m"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %-d.%-m.%Y"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %-d.%m"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %-d.%m.%Y"
+msgstr "%a %e/%m"
 
 #, fuzzy
 msgid "%a %-d/%-m"
@@ -664,6 +763,34 @@ msgstr "%a %e/%m"
 #, fuzzy
 msgid "%a %d-%b-%Y"
 msgstr "%a %e %B %Y"
+
+#, fuzzy
+msgid "%a %d. %B %Y"
+msgstr "%a %e %B %Y"
+
+#, fuzzy
+msgid "%a %d. %b"
+msgstr "%A %d %B"
+
+#, fuzzy
+msgid "%a %d. %b %Y"
+msgstr "%a %e %B %Y"
+
+#, fuzzy
+msgid "%a %d.%-m"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %d.%-m.%Y"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %d.%m"
+msgstr "%a %e/%m"
+
+#, fuzzy
+msgid "%a %d.%m.%Y"
+msgstr "%a %e/%m"
 
 #, fuzzy
 msgid "%a %d/%-m"
@@ -902,9 +1029,32 @@ msgstr "%d-%m"
 msgid "%d-%m"
 msgstr "%d-%m"
 
+#, fuzzy
+msgid "%d. %B %Y"
+msgstr "%d.%B %Y"
+
+msgid "%d. %b"
+msgstr ""
+
+#, fuzzy
+msgid "%d. %b %Y"
+msgstr "%A %d %B"
+
+msgid "%d.%-m"
+msgstr ""
+
+msgid "%d.%-m.%Y"
+msgstr ""
+
 #, python-format
 msgid "%d.%03d GB"
 msgstr "%d.%03d GB"
+
+msgid "%d.%m"
+msgstr ""
+
+msgid "%d.%m.%Y"
+msgstr ""
 
 msgid "%d/%-m"
 msgstr ""
@@ -1868,6 +2018,9 @@ msgstr "Američka Samoa"
 msgid "Amlogic"
 msgstr ""
 
+msgid "Amlogic remote"
+msgstr ""
+
 msgid "An empty filename is illegal."
 msgstr "Prazno ime datoteke je ilegalno."
 
@@ -2442,6 +2595,14 @@ msgstr "Pojačajte plavu"
 msgid "Boost green"
 msgstr "Pojačajte zelenu"
 
+#, fuzzy
+msgid "Boot time"
+msgstr "Vrijeme pokretanja"
+
+#, fuzzy
+msgid "Boot time and local time"
+msgstr "Pokretanje Android slike"
+
 msgid "Boot to Android image"
 msgstr "Pokretanje Android slike"
 
@@ -2912,6 +3073,9 @@ msgid "Choose the front panel display formatting style for dates. 'D' / 'DD' is 
 msgstr ""
 
 msgid "Choose the front panel display formatting style for times. 'H' / 'HH' is the hour for a 24 hour clock, 'h' / 'hh' is the hour for a 12 hour clock, 'mm' is the minutes.  ('HH' and 'hh' have leading zeros for single digit values.) The front panel display will be based on your choice but can be influenced any applicable skin."
+msgstr ""
+
+msgid "Choose the location for crash and debug logs folder."
 msgstr ""
 
 msgid "Choose the location where the EPG data will be stored when the %s %s is shut down. The location must be available at boot time."
@@ -3985,6 +4149,15 @@ msgstr ""
 msgid "Dayname D-Month-Year"
 msgstr ""
 
+msgid "Dayname D. Month Year"
+msgstr ""
+
+msgid "Dayname D.M.Year"
+msgstr ""
+
+msgid "Dayname D.MM.Year"
+msgstr ""
+
 msgid "Dayname D/M/Year"
 msgstr ""
 
@@ -3995,6 +4168,15 @@ msgid "Dayname DD Month Year"
 msgstr ""
 
 msgid "Dayname DD-Month-Year"
+msgstr ""
+
+msgid "Dayname DD. Month Year"
+msgstr ""
+
+msgid "Dayname DD.M.Year"
+msgstr ""
+
+msgid "Dayname DD.MM.Year"
 msgstr ""
 
 msgid "Dayname DD/M/Year"
@@ -4049,6 +4231,9 @@ msgid "Dayname Year/MM/D"
 msgstr ""
 
 msgid "Dayname Year/MM/DD"
+msgstr ""
+
+msgid "Debug log time format *"
 msgstr ""
 
 msgid "Debug to file"
@@ -4237,6 +4422,10 @@ msgstr "Otkriven NIMs:"
 
 #, fuzzy
 msgid "Device"
+msgstr "Informacije o usluzi"
+
+#, fuzzy
+msgid "Device id: "
 msgstr "Informacije o usluzi"
 
 msgid "Device mounts"
@@ -5846,6 +6035,10 @@ msgstr "Gana"
 msgid "Gibraltar"
 msgstr "Gibraltar"
 
+#, fuzzy
+msgid "Given device id: "
+msgstr "Trenutni uređaj: "
+
 msgid "Go down the list"
 msgstr "Idite niz popis"
 
@@ -6855,6 +7048,9 @@ msgstr "Uključite napajanje za LED tijekom stanja čekanja."
 msgid "LED setup"
 msgstr "OSD 3D postavljanje"
 
+msgid "LIRC remote"
+msgstr ""
+
 msgid "LNB"
 msgstr "LNB"
 
@@ -7034,6 +7230,10 @@ msgstr "Učitavanje"
 msgid "Local network"
 msgstr "Lokalna mreža"
 
+#, fuzzy
+msgid "Local time"
+msgstr "Lokalno"
+
 msgid "Locale"
 msgstr "Lokalno"
 
@@ -7052,7 +7252,7 @@ msgstr "Zaklj:"
 msgid "Log"
 msgstr ""
 
-msgid "Log python stack trace on spinner?"
+msgid "Log python stack trace on spinner"
 msgstr ""
 
 msgid "Log results to /tmp"
@@ -7060,6 +7260,13 @@ msgstr "Rezultat zapisa u /tmp"
 
 msgid "Logfile does not exist anymore"
 msgstr "Log datoteka više ne postoji"
+
+msgid "Logs"
+msgstr ""
+
+#, fuzzy
+msgid "Logs folder location"
+msgstr "<Lokacija zadnjeg tajmera>"
 
 msgid "Long filenames"
 msgstr "Dugi naslov"
@@ -7269,6 +7476,10 @@ msgstr "Medija player"
 
 msgid "Media scanner"
 msgstr "Medija skener"
+
+#, fuzzy
+msgid "Media service: "
+msgstr "Dodaj kanal"
 
 msgid "Medium is not a writeable DVD!"
 msgstr "Medij nije DVD za pisanje!"
@@ -8102,6 +8313,10 @@ msgstr "Sada upotrijebite postavku kontrasta kako biste povećali svjetlinu poza
 msgid "Number of channels shown in channel selection list"
 msgstr "Broj kanala na popisu za odabir kanala"
 
+#, fuzzy
+msgid "Number of digits in channel number"
+msgstr "Numeriranje kanala iz brzog pretraživanja"
+
 msgid "Number of repeating text on display."
 msgstr "Broj ponavljanja teksta na zaslonu."
 
@@ -8250,6 +8465,10 @@ msgstr ""
 
 #, fuzzy
 msgid "Open Vision information"
+msgstr "Python verzija: "
+
+#, fuzzy
+msgid "Open Vision language: "
 msgstr "Python verzija: "
 
 msgid "Open Vision module: "
@@ -8895,6 +9114,18 @@ msgid "Power LED can be turned on or off here."
 msgstr ""
 
 #, fuzzy
+msgid "Power LED colour state in Deep-Standby"
+msgstr "Radni LED status u dubokom stanju čekanja"
+
+#, fuzzy
+msgid "Power LED colour state in Standby"
+msgstr "Radni LED status u stanju čekanja"
+
+#, fuzzy
+msgid "Power LED colour state when running."
+msgstr "Operativni LED status dok se izvodi."
+
+#, fuzzy
 msgid "Power LED state during deep-standby."
 msgstr "Uključite napajanje za LED tijekom dubokog stanja čekanja."
 
@@ -8909,10 +9140,6 @@ msgstr "Radni LED status u dubokom stanju čekanja"
 #, fuzzy
 msgid "Power LED state in Standby"
 msgstr "Radni LED status u stanju čekanja"
-
-#, fuzzy
-msgid "Power LED state when running."
-msgstr "Operativni LED status dok se izvodi."
 
 #, fuzzy
 msgid "Power On Display"
@@ -8949,6 +9176,10 @@ msgstr "Izbornik napajanja"
 #, fuzzy
 msgid "PowerTimer list"
 msgstr "Prikažite popis usluga"
+
+#, fuzzy
+msgid "Powerless"
+msgstr "Izbornik napajanja"
 
 #, fuzzy
 msgid "Predefined"
@@ -9638,6 +9869,10 @@ msgstr "Zahtijeva provjeru autentičnosti za web prijenos"
 
 msgid "Required medium type:"
 msgstr "Obavezna vrsta medija:"
+
+#, fuzzy
+msgid "Requires internet connection."
+msgstr "Provjerite internetsku vezu"
 
 msgid "Rereading partition table"
 msgstr "Ponovno čitanje tablice particija"
@@ -12470,6 +12705,9 @@ msgstr "Ovaj DVD RW medij je već formatiran - ponovno formatiranje će izbrisat
 msgid "This allows you change the font size relative to skin size, so 1 increases by 1 point size, and -1 decreases by 1 point size"
 msgstr ""
 
+msgid "This allows you to set the number of digits you can input when selecting channels using number input."
+msgstr ""
+
 #, python-format
 msgid "This field allows you to search an additional symbol rate up to %s."
 msgstr "Ovo polje omogućuje pretraživanje dodatne brzine do %s."
@@ -12488,6 +12726,9 @@ msgstr "Ovo je višenamjenski tjuner. Dostupne opcije ovise o hardveru."
 
 msgid "This is the order in which DiSEqC commands are sent to the aerial system. The order must correspond exactly with the order the physical devices are arranged along the signal cable (starting from the receiver end)."
 msgstr "Ovo je redoslijed slanja DiSEqC naredbi u antenski sustav. Poredak mora točno odgovarati poretku postavljanja uređaja koji su postavljeni duž signalnog kabela (počevši od kraja prijemnika)."
+
+msgid "This is the prefix of each entry in the debug log. 'boot time' is the number of seconds since the receiver was last booted."
+msgstr ""
 
 msgid "This option allows to reduce the block-noise in the picture. Obviously this is at the cost of the picture's sharpness."
 msgstr "Ova opcija omogućuje smanjenje smetnji na slici. Manifestira se kao oštrina slike."
@@ -13334,6 +13575,9 @@ msgstr "Ažuriranje kataloga softvera"
 
 msgid "Upper case"
 msgstr "Velika slova"
+
+msgid "Uptime: "
+msgstr ""
 
 msgid "Uruguay"
 msgstr "Urugvaj"

@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
@@ -77,6 +79,12 @@ class About(Screen):
 		AboutText += _("Last update: ") + about.getUpdateDateString() + "\n"
 		AboutText += _("Enigma2 (re)starts: %d\n") % config.misc.startCounter.value
 		AboutText += _("Enigma2 debug level: %d\n") % eGetEnigmaDebugLvl()
+
+		AboutText += _("Uptime: ") + about.getSTBUptime() + "\n"
+
+		if fileExists("/etc/openvision/mediaservice"):
+			mediaservice = open("/etc/openvision/mediaservice", "r").read().strip()
+			AboutText += _("Media service: ") + mediaservice.replace("enigma2-plugin-systemplugins-","") + "\n"
 
 		AboutText += "\n"
 
@@ -183,6 +191,11 @@ class OpenVisionInformation(Screen):
 
 		OpenVisionInformationText += _("Open Vision version: ") + boxbranding.getVisionVersion() + "\n"
 		OpenVisionInformationText += _("Open Vision revision: ") + boxbranding.getVisionRevision() + "\n"
+
+		if fileExists("/etc/openvision/visionlanguage"):
+			visionlanguage = open("/etc/openvision/visionlanguage", "r").read().strip()
+			OpenVisionInformationText += _("Open Vision language: ") + visionlanguage + "\n"
+
 		OpenVisionInformationText += _("Open Vision module: ") + about.getVisionModule() + "\n"
 		OpenVisionInformationText += _("Flash type: ") + about.getFlashType() + "\n"
 
@@ -1202,11 +1215,11 @@ class Troubleshoot(Screen):
 
 	def getDebugFilesList(self):
 		import glob
-		return [x for x in sorted(glob.glob("/home/root/enigma.*.debuglog"), key=lambda x: os.path.isfile(x) and os.path.getmtime(x))]
+		return [x for x in sorted(glob.glob("/home/root/logs/enigma2_debug_*.log"), key=lambda x: os.path.isfile(x) and os.path.getmtime(x))]
 
 	def getLogFilesList(self):
 		import glob
-		home_root = "/home/root/enigma2_crash.log"
+		home_root = "/home/root/logs/enigma2_crash.log"
 		tmp = "/tmp/enigma2_crash.log"
 		return [x for x in sorted(glob.glob("/mnt/hdd/*.log"), key=lambda x: os.path.isfile(x) and os.path.getmtime(x))] + (os.path.isfile(home_root) and [home_root] or []) + (os.path.isfile(tmp) and [tmp] or [])
 

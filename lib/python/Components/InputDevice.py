@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 from Components.config import config, ConfigSlider, ConfigSubsection, ConfigYesNo, ConfigText, ConfigInteger
 from enigma import getBoxType, getBoxBrand
@@ -49,7 +51,7 @@ class inputDevices:
 				self.name = self.name[:self.name.find("\0")]
 				os.close(self.fd)
 			except (IOError,OSError), err:
-				print('[InputDevice] getInputDevices ' + evdev + ' <ERROR: ioctl(EVIOCGNAME): ' + str(err) + ' >')
+				print("[InputDevice] getInputDevices " + evdev + " <ERROR: ioctl(EVIOCGNAME): " + str(err) + " >")
 				self.name = None
 
 			if self.name:
@@ -59,11 +61,11 @@ class inputDevices:
 
 
 	def getInputDeviceType(self,name):
-		if "remote control" in name:
+		if "remote control" in str(name).lower():
 			return "remote"
-		elif "keyboard" in name:
+		elif "keyboard" in str(name).lower():
 			return "keyboard"
-		elif "mouse" in name:
+		elif "mouse" in str(name).lower():
 			return "mouse"
 		else:
 			print("[InputDevice] Unknown device type:",name)
@@ -144,7 +146,7 @@ class InitInputDevices:
 		config.inputDevices = ConfigSubsection()
 		for device in sorted(iInputDevices.Devices.iterkeys()):
 			self.currentDevice = device
-			#print("[InitInputDevices] -> creating config entry for device: %s -> %s  " % (self.currentDevice, iInputDevices.Devices[device]["name"]))
+			#print("[InitInputDevices] creating config entry for device: %s -> %s  " % (self.currentDevice, iInputDevices.Devices[device]["name"]))
 			self.setupConfigEntries(self.currentDevice)
 			self.currentDevice = ""
 

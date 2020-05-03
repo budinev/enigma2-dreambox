@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 from Components.VariableText import VariableText
 from Components.Renderer.Renderer import Renderer
@@ -22,7 +24,8 @@ class Label(VariableText, Renderer):
 		if what[0] == self.CHANGED_CLEAR:
 			self.text = ""
 		elif self.source:
-			self.text = self.source.text
+			if hasattr(self.source, "text"):
+				self.text = self.source.text
 		else:
 			self.text = "<No Source>"
 			print("[Label] SKINERROR: render label has no source")

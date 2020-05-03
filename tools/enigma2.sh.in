@@ -6,10 +6,10 @@ datarootdir=@datarootdir@
 
 export PATH=$PATH:/usr/script
 
-brandcheck=`cat /etc/brand`
-modelcheck=`cat /etc/model`
+brandcheck=`cat /etc/openvision/brand`
+modelcheck=`cat /etc/openvision/model`
 
-if [ $modelcheck == "sf8008" ] || [ $modelcheck == "sf8008m" ] || [ $modelcheck == "ustym4kpro" ] || [ $modelcheck == "cc1" ] || [ $modelcheck == "gbtrio4k" ] || [ $modelcheck == "gbip4k" ] || [ $modelcheck == "beyonwizv2" ] || [ $modelcheck == "viper4k" ]; then
+if [ $modelcheck == "sf8008" ] || [ $modelcheck == "sf8008m" ] || [ $modelcheck == "ustym4kpro" ] || [ $modelcheck == "gbtrio4k" ] || [ $modelcheck == "gbip4k" ] || [ $modelcheck == "beyonwizv2" ] || [ $modelcheck == "viper4k" ]; then
 	count=`ps -ef |grep libreader |grep -v "grep" |wc -l`
 	if [ 0 == $count ];then
 		libreader 720P_50
@@ -44,10 +44,6 @@ if [ ! -e /etc/enigma2/settings ]; then
 	touch /etc/enigma2/settings
 fi
 
-if [ ! -d /tmp/multibootcheck ]; then
-	mkdir -p /tmp/multibootcheck
-fi
-
 # enigma main loop
 while : ; do
 	# show bootlogo on enigma2 start
@@ -73,14 +69,25 @@ while : ; do
 
 	# start enigma
 	sync
+
+	(sleep 1; echo "enigma2 is the main application so adjust oom score!"; PID=$(pidof enigma2); \
+		[ -e /proc/$PID/oom_score_adj ] && echo "-999" > /proc/$PID/oom_score_adj || echo "-17" > /proc/$PID/oom_adj;) &
+
+	# set time format used to prefix each line in the debug logs
+	if grep -q 'config\.crash\.logtimeformat' @sysconfdir@/enigma2/settings; then
+		export ENIGMA_DEBUG_TIME=`grep "config\.crash\.logtimeformat" @sysconfdir@/enigma2/settings | sed -E "s/^.*=(.*)$/\1/" -`
+	fi
+
 	if [ $DEBUG_LVL -lt 4 ]; then
 		LD_PRELOAD=$LIBS ENIGMA_DEBUG_LVL=$DEBUG_LVL @bindir@/enigma2
 	else
+		debug_dir=$(sed -n 's/config.crash.debug_path=//p' @sysconfdir@/enigma2/settings)
+		[ -n "${debug_dir}" -a -d "${debug_dir}" ] || debug_dir=/home/root/logs/
 		# remove old logfiles
 		keep=5;
-		for file in `ls -t /home/root/enigma.*.debuglog`; do let "keep--"; if [ "$keep" -lt "0" ]; then rm $file; fi; done
+		for file in `ls -t ${debug_dir}enigma2_debug_*.log`; do let "keep--"; if [ "$keep" -lt "0" ]; then rm $file; fi; done
 		# todays log file
-		file="/home/root/enigma.$(date +%Y%m%d).debuglog"
+		file="${debug_dir}enigma2_debug_$(date +%Y-%m-%d_%H-%M-%S).log"
 		LD_PRELOAD=$LIBS ENIGMA_DEBUG_LVL=$DEBUG_LVL @bindir@/enigma2 >> $file 2>&1
 	fi
 
@@ -107,11 +114,14 @@ while : ; do
 	case $ret in
 		1)
 			/sbin/halt
+			if [ $brandcheck == "wetek" ]; then
+				echo "0" > /sys/class/leds/wetek\:blue\:wifiled/brightness
+				echo "0" > /sys/class/leds/wetek\:blue\:ethled/brightness
+				echo "mem" > /sys/power/state
+			fi
 			;;
 		2)
-			if [ -f /proc/stb/fp/force_restart ]; then
-				echo 1 > /proc/stb/fp/force_restart
-			fi
+			[ -f /proc/stb/fp/force_restart ] && echo 1 > /proc/stb/fp/force_restart
 			/sbin/reboot
 			;;
 		3)
@@ -119,7 +129,7 @@ while : ; do
 			;;
 		4)
 			/sbin/rmmod lcd
-			/usr/sbin/fpupgrade --upgrade 2>&1 | tee /home/root/fpupgrade.log
+			@sbindir@/fpupgrade --upgrade 2>&1 | tee /home/root/fpupgrade.log
 			sleep 1;
 			/sbin/rmmod fp
 			/sbin/modprobe fp
@@ -148,12 +158,8 @@ while : ; do
 					echo "rescue" > /proc/stb/fp/boot_mode
 				fi
 			fi
-			if [ -e /usr/bin/setenv ]; then
-				/usr/bin/setenv  default_sys  1
-			fi
-			if [ -e /usr/sbin/fw_setenv ]; then
-				/usr/sbin/fw_setenv bootfromnand 1
-			fi
+			[ -e @bindir@/setenv ] && @bindir@/setenv default_sys 1
+			[ -e @sbindir@/fw_setenv ] && @sbindir@/fw_setenv bootfromnand 1
 			/sbin/reboot
 			;;
 		16)
@@ -218,7 +224,7 @@ while : ; do
 			;;
 		45)
 			echo "    " > /dev/lcd0
-			/usr/bin/gigablue_wol
+			@bindir@/gigablue_wol
 			;;
 		*)
 			break

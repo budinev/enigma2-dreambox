@@ -163,8 +163,14 @@ void bsodFatal(const char *component)
 	FILE *f;
 	std::string crashlog_name;
 	std::ostringstream os;
-	os << "/media/hdd/enigma2_crash_";
-	os << time(0);
+	time_t t = time(0);
+	struct tm tm;
+	char tm_str[32];
+	localtime_r(&t, &tm);
+	strftime(tm_str, sizeof(tm_str), "%Y-%m-%d_%H-%M-%S", &tm);
+	os << getConfigString("config.crash.debug_path", "/home/root/logs/");
+	os << "enigma2_crash_";
+	os << tm_str;
 	os << ".log";
 	crashlog_name = os.str();
 	f = fopen(crashlog_name.c_str(), "wb");
@@ -175,7 +181,7 @@ void bsodFatal(const char *component)
 		 * alone because we may be in a crash loop and writing this file
 		 * all night long may damage the flash. Also, usually the first
 		 * crash log is the most interesting one. */
-		crashlog_name = "/home/root/enigma2_crash.log";
+		crashlog_name = "/home/root/logs/enigma2_crash.log";
 		if ((access(crashlog_name.c_str(), F_OK) == 0) ||
 		    ((f = fopen(crashlog_name.c_str(), "wb")) == NULL))
 		{
@@ -197,7 +203,7 @@ void bsodFatal(const char *component)
 		strftime(tm_str, sizeof(tm_str), "%a %b %_d %T %Y", &tm);
 
 		fprintf(f,
-			"Open Vision Enigma2 crash log\n\n"
+			"Open Vision enigma2 crash log\n\n"
 			"crashdate=%s\n"
 			"compiledate=%s\n"
 			"skin=%s\n"
@@ -213,12 +219,21 @@ void bsodFatal(const char *component)
 			enigma2_rev,
 			component);
 
-		stringFromFile(f, "stbmodel", "/etc/model");
-		stringFromFile(f, "stbbrand", "/etc/brand");
+		stringFromFile(f, "stbmodel", "/etc/openvision/model");
+		stringFromFile(f, "stbbrand", "/etc/openvision/brand");
 		stringFromFile(f, "kernelcmdline", "/proc/cmdline");
 		stringFromFile(f, "nimsockets", "/proc/bus/nim_sockets");
-		stringFromFile(f, "visionversion", "/etc/visionversion");
-		stringFromFile(f, "visionrevision", "/etc/visionrevision");
+		stringFromFile(f, "distro", "/etc/openvision/distro");
+		stringFromFile(f, "oe", "/etc/openvision/oe");
+		stringFromFile(f, "python", "/etc/openvision/python");
+		stringFromFile(f, "mediaservice", "/etc/openvision/mediaservice");
+		stringFromFile(f, "multilib", "/etc/openvision/multilib");
+		stringFromFile(f, "architecture", "/etc/openvision/architecture");
+		stringFromFile(f, "visionversion", "/etc/openvision/visionversion");
+		stringFromFile(f, "visionrevision", "/etc/openvision/visionrevision");
+		stringFromFile(f, "visionlanguage", "/etc/openvision/visionlanguage");
+		stringFromFile(f, "compiledby", "/etc/openvision/developername");
+		stringFromFile(f, "feedsurl", "/etc/openvision/feedsurl");
 
 		/* dump the log ringbuffer */
 		fprintf(f, "\n\n");
@@ -370,7 +385,7 @@ void handleFatalSignal(int signum, siginfo_t *si, void *ctx)
 	oops(uc->uc_mcontext);
 #endif
 	print_backtrace();
-	eLog(lvlFatal, "-------FATAL SIGNAL");
+	eLog(lvlFatal, "-------FATAL SIGNAL (%d)", signum);
 	bsodFatal("enigma2, signal");
 }
 
