@@ -97,3 +97,13 @@ dvbinclude_HEADERS += \
 	dvb/edvbdemux.h \
 	dvb/omxdecoder.h
 endif
+
+if HAVE_FCC_ABILITY
+dvb_libenigma_dvb_a_SOURCES += \
+	dvb/fcc.cpp \
+	dvb/fccdecoder.cpp
+
+dvbinclude_HEADERS += \
+	dvb/fcc.h \
+	dvb/fccdecoder.h
+endif

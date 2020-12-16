@@ -5,13 +5,13 @@ from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Screens.WizardLanguage import WizardLanguage
 from Screens.Rc import Rc
-from enigma import getBoxType
 try:
 	from Plugins.SystemPlugins.OSDPositionSetup.overscanwizard import OverscanWizard
 except:
 	OverscanWizard = None
 from Components.Pixmap import Pixmap
 from Components.ProgressBar import ProgressBar
+from Components.Sources.StaticText import StaticText
 from Components.Label import Label
 from Components.ScrollLabel import ScrollLabel
 from Components.config import config, ConfigBoolean, configfile
@@ -29,15 +29,14 @@ class StartWizard(WizardLanguage, Rc):
 		WizardLanguage.__init__(self, session, showSteps = False)
 		Rc.__init__(self)
 		self["wizard"] = Pixmap()
+		self["lab1"] = StaticText(_("OpenVision"))
+		self["lab2"] = StaticText(_("Lets define enigma2 once more"))
+		self["lab3"] = StaticText(_("Report problems to:"))
+		self["lab4"] = StaticText(_("https://openvision.tech"))
+		self["lab5"] = StaticText(_("Sources are available at:"))
+		self["lab6"] = StaticText(_("https://github.com/OpenVisionE2"))
 
 	def markDone(self):
-		# setup remote control, all stb have same settings except dm8000 which uses a different settings
-		if getBoxType() == "dm8000":
-			config.misc.rcused.value = 0
-		else:
-			config.misc.rcused.value = 1
-		config.misc.rcused.save()
-
 		config.misc.firstrun.value = 0
 		config.misc.firstrun.save()
 		configfile.save()
@@ -81,8 +80,9 @@ class AutoInstallWizard(Screen):
 		<panel position="right" size="5%,*"/>
 		<panel position="top" size="*,5%"/>
 		<panel position="bottom" size="*,5%"/>
-		<widget name="header" position="top" size="*,50" font="Regular;40"/>
+		<widget name="header" position="top" size="*,48" font="Regular;38" noWrap="1"/>
 		<widget name="progress" position="top" size="*,24" backgroundColor="#00242424"/>
+		<eLabel position="top" size="*,2"/>
 		<widget name="AboutScrollLabel" font="Fixed;20" position="fill"/>
 	</screen>"""
 	def __init__(self, session):

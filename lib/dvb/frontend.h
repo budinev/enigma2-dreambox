@@ -65,21 +65,23 @@ public:
 		NEW_CSW,
 		NEW_UCSW,
 		NEW_TONEBURST,
-		CSW,                  // state of the committed switch
-		UCSW,                 // state of the uncommitted switch
-		TONEBURST,            // current state of toneburst switch
-		NEW_ROTOR_CMD,        // prev sent rotor cmd
-		NEW_ROTOR_POS,        // new rotor position (not validated)
-		ROTOR_CMD,            // completed rotor cmd (finalized)
-		ROTOR_POS,            // current rotor position
-		LINKED_PREV_PTR,      // prev double linked list (for linked FEs)
-		LINKED_NEXT_PTR,      // next double linked list (for linked FEs)
-		SATPOS_DEPENDS_PTR,   // pointer to FE with configured rotor (with twin/quattro lnb)
-		FREQ_OFFSET,          // current frequency offset
-		CUR_VOLTAGE,          // current voltage
-		CUR_TONE,             // current continuous tone
-		SATCR,                // current SatCR
-		DICTION,              // current "diction" (0 = normal, 1 = Unicable, 2 = JESS)
+		CSW,                         // state of the committed switch
+		UCSW,                        // state of the uncommitted switch
+		TONEBURST,                   // current state of toneburst switch
+		NEW_ROTOR_CMD,               // prev sent rotor cmd
+		NEW_ROTOR_POS,               // new rotor position (not validated)
+		ROTOR_CMD,                   // completed rotor cmd (finalized)
+		ROTOR_POS,                   // current rotor position
+		LINKED_PREV_PTR,             // prev double linked list (for linked FEs)
+		LINKED_NEXT_PTR,             // next double linked list (for linked FEs)
+		SATPOS_DEPENDS_PTR,          // pointer to FE with configured rotor (with twin/quattro lnb)
+		ADVANCED_SATPOSDEPENDS_ROOT, // root frontend with rotor (advanced satpos depending)
+		ADVANCED_SATPOSDEPENDS_LINK, // link to FE with configured rotor (with twin/quattro lnb, advanced satpos depending)
+		FREQ_OFFSET,                 // current frequency offset
+		CUR_VOLTAGE,                 // current voltage
+		CUR_TONE,                    // current continuous tone
+		SATCR,                       // current SatCR
+		DICTION,                     // current "diction" (0 = normal, 1 = Unicable, 2 = JESS)
 		NUM_DATA_ENTRIES
 	};
 	sigc::signal1<void,iDVBFrontend*> m_stateChanged;
@@ -88,6 +90,7 @@ private:
 	bool m_simulate;
 	bool m_enabled;
 	bool m_fbc;
+	bool m_is_usbtuner;
 	eDVBFrontend *m_simulate_fe; // only used to set frontend type in dvb.cpp
 	int m_type;
 #if HAVE_ALIEN5
@@ -163,7 +166,7 @@ public:
 	void getTransponderData(ePtr<iDVBTransponderData> &dest, bool original);
 	void getFrontendData(ePtr<iDVBFrontendData> &dest);
 
-	int isCompatibleWith(ePtr<iDVBFrontendParameters> &feparm);
+	int isCompatibleWith(ePtr<iDVBFrontendParameters> &feparm, bool is_configured_sat = false);
 	int getDVBID() { return m_dvbid; }
 	int getSlotID() { return m_slotid; }
 	bool setSlotInfo(int id, const char *descr, bool enabled, bool isDVBS2, int frontendid);
@@ -185,6 +188,7 @@ public:
 	void set_FBCTuner(bool yesno) { m_fbc = yesno; }
 	bool getEnabled() { return m_enabled; }
 	void setEnabled(bool enable) { m_enabled = enable; }
+	void setUSBTuner(bool yesno) { m_is_usbtuner = yesno; }
 	bool is_multistream();
 	std::string getCapabilities();
 };

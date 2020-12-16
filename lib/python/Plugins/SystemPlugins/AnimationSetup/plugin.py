@@ -10,19 +10,21 @@ from Components.config import config, ConfigNumber, ConfigSelection, ConfigSelec
 from Plugins.Plugin import PluginDescriptor
 from enigma import setAnimation_current, setAnimation_speed, getBoxBrand
 
-if not getBoxBrand() == 'gigablue':
+brand = getBoxBrand()
+
+if brand != 'gigablue':
 	from enigma import setAnimation_current_listbox
 
 # default = disabled
-if getBoxBrand() == 'gigablue':
+if brand == 'gigablue':
 	g_default = {
 		"current": 0,
-		"speed"  : 20,
+		"speed": 20,
 		}
 else:
 	g_default = {
 		"current": 0,
-		"speed"  : 20,
+		"speed": 20,
 		"listbox": "0",
 		}
 
@@ -34,7 +36,7 @@ g_orig_doClose = None
 
 config.misc.window_animation_default = ConfigNumber(default=g_default["current"])
 config.misc.window_animation_speed = ConfigSelectionNumber(15, g_max_speed, 1, default=g_default["speed"])
-if not getBoxBrand() == 'gigablue':
+if brand != 'gigablue':
 	config.misc.listbox_animation_default = ConfigSelection(default = g_default["listbox"], choices = [ ("0", _("Disable")), ("1", _("Enable")), ("2", _("Same behavior as current animation")) ])
 
 class AnimationSetupConfig(ConfigListScreen, Screen):
@@ -58,11 +60,11 @@ class AnimationSetupConfig(ConfigListScreen, Screen):
 		ConfigListScreen.__init__(self, self.entrylist)
 
 		self["actions"] = ActionMap(["OkCancelActions", "ColorActions",], {
-			"ok"     : self.keyGreen,
-			"green"  : self.keyGreen,
-			"yellow" : self.keyYellow,
-			"red"    : self.keyRed,
-			"cancel" : self.keyRed,
+			"ok": self.keyGreen,
+			"green": self.keyGreen,
+			"yellow": self.keyYellow,
+			"red": self.keyRed,
+			"cancel": self.keyRed,
 		}, -2)
 		self["key_red"]   = StaticText(_("Cancel"))
 		self["key_green"] = StaticText(_("Save"))
@@ -78,7 +80,7 @@ class AnimationSetupConfig(ConfigListScreen, Screen):
 		config.misc.window_animation_speed.save()
 		setAnimation_speed(int(config.misc.window_animation_speed.value))
 		config.misc.listbox_animation_default.save()
-		if not getBoxBrand() == 'gigablue':
+		if brand != 'gigablue':
 			setAnimation_current_listbox(int(config.misc.listbox_animation_default.value))
 		self.close()
 
@@ -90,7 +92,7 @@ class AnimationSetupConfig(ConfigListScreen, Screen):
 	def keyYellow(self):
 		global g_default
 		config.misc.window_animation_speed.value = g_default["speed"]
-		if not getBoxBrand() == 'gigablue':
+		if brand != 'gigablue':
 			config.misc.listbox_animation_default.value = g_default["listbox"]
 		self.makeConfigList()
 
@@ -105,7 +107,7 @@ class AnimationSetupConfig(ConfigListScreen, Screen):
 
 		entrySpeed = getConfigListEntry(_("Animation Speed"), config.misc.window_animation_speed)
 		self.entrylist.append(entrySpeed)
-		if not getBoxBrand() == 'gigablue':
+		if brand != 'gigablue':
 			entryMoveSelection = getConfigListEntry(_("Enable Focus Animation"), config.misc.listbox_animation_default)
 			self.entrylist.append(entryMoveSelection)
 		self["config"].list = self.entrylist
@@ -113,7 +115,7 @@ class AnimationSetupConfig(ConfigListScreen, Screen):
 
 
 class AnimationSetupScreen(Screen):
-	if getBoxBrand() == 'gigablue':
+	if brand == 'gigablue':
 		animationSetupItems = [
 			{"idx":0, "name":_("Disable Animations")},
 			{"idx":1, "name":_("Simple fade")},
@@ -204,14 +206,14 @@ class AnimationSetupScreen(Screen):
 			config.misc.window_animation_default.value = key
 			config.misc.window_animation_default.save()
 			setAnimation_current(key)
-			if not getBoxBrand() == 'gigablue':
+			if brand != 'gigablue':
 				setAnimation_current_listbox(int(config.misc.listbox_animation_default.value))
 		self.close()
 
 	def keyclose(self):
 		setAnimation_current(config.misc.window_animation_default.value)
 		setAnimation_speed(int(config.misc.window_animation_speed.value))
-		if not getBoxBrand() == 'gigablue':
+		if brand != 'gigablue':
 			setAnimation_current_listbox(int(config.misc.listbox_animation_default.value))
 		self.close()
 
@@ -231,7 +233,7 @@ class AnimationSetupScreen(Screen):
 
 def checkAttrib(self, paused):
 	global g_animation_paused
-	if g_animation_paused is paused and self.skinAttributes is not None:
+	if g_animation_paused is paused and hasattr(self, "skinAttributes") and self.skinAttributes:
 		for (attr, value) in self.skinAttributes:
 			if attr == "animationPaused" and value in ("1", "on"):
 				return True
@@ -266,7 +268,7 @@ def startAnimationSetup(menuid):
 def sessionAnimationSetup(session, reason, **kwargs):
 	setAnimation_current(config.misc.window_animation_default.value)
 	setAnimation_speed(int(config.misc.window_animation_speed.value))
-	if not getBoxBrand() == 'gigablue':
+	if brand != 'gigablue':
 		setAnimation_current_listbox(int(config.misc.listbox_animation_default.value))
 
 	global g_orig_show, g_orig_doClose

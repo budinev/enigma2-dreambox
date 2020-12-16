@@ -6,8 +6,17 @@ from fcntl import ioctl
 from struct import pack, unpack
 from time import time, localtime
 from enigma import getBoxType, getBoxBrand
-from Components.SystemInfo import SystemInfo
 from Tools.Directories import fileExists
+from boxbranding import getMachineBuild
+
+def getBoxProcType():
+	procmodeltype = "unknown"
+	try:
+		if fileExists("/proc/stb/info/type"):
+			procmodeltype = open("/proc/stb/info/type", "r").readline().strip().lower()
+	except IOError:
+		print("[StbHardware] getBoxProcType failed!")
+	return procmodeltype
 
 def getBoxProc():
 	procmodel = "unknown"
@@ -15,7 +24,7 @@ def getBoxProc():
 		if fileExists("/proc/stb/info/hwmodel"):
 			procmodel = open("/proc/stb/info/hwmodel", "r").readline().strip().lower()
 		elif fileExists("/proc/stb/info/azmodel"):
-			procmodel = open("/proc/stb/info/azmodel", "r").readline().strip().lower()
+			procmodel = open("/proc/stb/info/model", "r").readline().strip().lower()
 		elif fileExists("/proc/stb/info/gbmodel"):
 			procmodel = open("/proc/stb/info/gbmodel", "r").readline().strip().lower()
 		elif fileExists("/proc/stb/info/vumodel") and not fileExists("/proc/stb/info/boxtype"):
@@ -64,15 +73,15 @@ def getFPVersion():
 		if getBoxBrand() == "blackbox" and fileExists("/proc/stb/info/micomver"):
 			ret = open("/proc/stb/info/micomver", "r").read()
 		elif fileExists("/proc/stb/fp/version"):
-			if SystemInfo["DreamBoxDTSAudio"] or getBoxType().startswith("dm9") or getBoxType().startswith("dm52"):
+			if getMachineBuild() == "dm4kgen" or getBoxType() in ("dm520", "dm7080", "dm820"):
 				ret = open("/proc/stb/fp/version", "r").read()
 			else:
-				ret = long(open("/proc/stb/fp/version", "r").read())
+				ret = int(open("/proc/stb/fp/version", "r").read())
 		elif fileExists("/sys/firmware/devicetree/base/bolt/tag"):
 			ret = open("/sys/firmware/devicetree/base/bolt/tag", "r").read().rstrip("\0")
 		else:
 			fp = open("/dev/dbox/fp0")
-			ret = ioctl(fp.fileno(),0)
+			ret = ioctl(fp.fileno(), 0)
 	except IOError:
 		print("[StbHardware] getFPVersion failed!")
 	return ret
@@ -118,7 +127,7 @@ def setRTCtime(wutime):
 def getFPWakeuptime():
 	ret = 0
 	try:
-		ret = long(open("/proc/stb/fp/wakeup_time", "r").read())
+		ret = int(open("/proc/stb/fp/wakeup_time", "r").read())
 	except IOError:
 		try:
 			fp = open("/dev/dbox/fp0")

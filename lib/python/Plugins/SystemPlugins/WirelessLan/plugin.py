@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from __future__ import print_function
-from enigma import eTimer, eEnv
+from enigma import eTimer, eEnv, getBoxType
 from Screens.Screen import Screen
 from Components.ActionMap import ActionMap, NumberActionMap
 from Components.Pixmap import Pixmap, MultiPixmap
@@ -107,9 +107,9 @@ class WlanStatus(Screen):
 		self.setTitle(_("Wireless network state"))
 
 	def resetList(self):
-		iStatus.getDataForInterface(self.iface,self.getInfoCB)
+		iStatus.getDataForInterface(self.iface, self.getInfoCB)
 
-	def getInfoCB(self,data,status):
+	def getInfoCB(self, data, status):
 		if data is not None:
 			if data is True:
 				if status is not None:
@@ -169,7 +169,7 @@ class WlanStatus(Screen):
 		self["IF"].setText(iNetwork.getFriendlyAdapterName(self.iface))
 		self["Statustext"].setText(_("Link:"))
 
-	def updateStatusLink(self,status):
+	def updateStatusLink(self, status):
 		if status is not None:
 			if status[self.iface]["essid"] == "off" or status[self.iface]["accesspoint"] == "Not-Associated" or status[self.iface]["accesspoint"] == False:
 				self["statuspic"].setPixmapNum(1)
@@ -388,10 +388,10 @@ def configStrings(iface):
 		encryption = config.plugins.wlan.encryption.value
 		psk = config.plugins.wlan.psk.value
 		essid = config.plugins.wlan.essid.value
-		ret += '\tpre-up wl-config.sh -m ' + encryption.lower() + ' -k ' + psk + ' -s "' + essid + '" \n'
+		ret += '\tpre-up wl-config.sh -m ' + encryption.lower() + ' -k "' + psk + '" -s "' + essid + '" \n'
 		ret += '\tpost-down wl-down.sh\n'
 	else:
-		if driver == 'madwifi' and config.plugins.wlan.hiddenessid.value:
+		if (driver == 'madwifi' or getBoxType() == "dm8000") and config.plugins.wlan.hiddenessid.value:
 			ret += "\tpre-up iwconfig " + iface + " essid \"" + re.escape(config.plugins.wlan.essid.value) + "\" || true\n"
 		ret += "\tpre-up wpa_supplicant -i" + iface + " -c" + getWlanConfigName(iface) + " -B -dd -D" + driver + " || true\n"
 		ret += "\tpre-down wpa_cli -i" + iface + " terminate || true\n"

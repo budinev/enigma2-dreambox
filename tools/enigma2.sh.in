@@ -8,8 +8,13 @@ export PATH=$PATH:/usr/script
 
 brandcheck=`cat /etc/openvision/brand`
 modelcheck=`cat /etc/openvision/model`
+platformcheck=`cat /etc/openvision/platform`
 
-if [ $modelcheck == "sf8008" ] || [ $modelcheck == "sf8008m" ] || [ $modelcheck == "ustym4kpro" ] || [ $modelcheck == "gbtrio4k" ] || [ $modelcheck == "gbip4k" ] || [ $modelcheck == "beyonwizv2" ] || [ $modelcheck == "viper4k" ]; then
+if [ $brandcheck == "mecool" ]; then
+	export media_arm_audio_decoder=ape,flac,dts,ac3,eac3,wma,wmapro,mp3,aac,vorbis,raac,cook,amr,pcm,adpcm
+fi
+
+if [ $platformcheck == "octagonhisil" ] || [ $modelcheck == "ustym4kpro" ] || [ $platformcheck == "gbmv200" ] || [ $modelcheck == "beyonwizv2" ] || [ $modelcheck == "viper4k" ]; then
 	count=`ps -ef |grep libreader |grep -v "grep" |wc -l`
 	if [ 0 == $count ];then
 		libreader 720P_50
@@ -47,12 +52,11 @@ fi
 # enigma main loop
 while : ; do
 	# show bootlogo on enigma2 start
-	if [ -x @bindir@/showiframe ]; then
-		if [ -f @sysconfdir@/enigma2/backdrop.mvi ]; then
-			@bindir@/showiframe @sysconfdir@/enigma2/backdrop.mvi
-		elif [ -f @sysconfdir@/enigma2/bootlogo.mvi ]; then
-			@bindir@/showiframe @sysconfdir@/enigma2/bootlogo.mvi
-		elif [ -f @datadir@/bootlogo.mvi ]; then
+	if [ -x @bindir@/exteplayer3 ] && [ -f @datadir@/bootlogo.mp4 ]; then
+		@bindir@/exteplayer3 @datadir@/bootlogo.mp4
+	else
+		if [ -x @bindir@/showiframe ] && [ -f @datadir@/bootlogo.mvi ]; then
+			killall -9 showiframe; sleep 1
 			@bindir@/showiframe @datadir@/bootlogo.mvi
 		fi
 	fi
@@ -60,6 +64,18 @@ while : ; do
 	# hook to execute scripts always before enigma2 start
 	if [ -x @bindir@/enigma2_pre_start.sh ]; then
 		@bindir@/enigma2_pre_start.sh
+	fi
+
+	if [ $brandcheck == "dreambox" ]; then
+		DISK=$(grep "/media/ba" /proc/mounts | awk '{gsub("/media/ba",""); print $1}' | head -n 1)
+		umount -f /media/ba
+		sleep 1
+		umount -f ${DISK}
+		sleep 1
+		mkdir -p /media/ba
+		sleep 1
+		mount ${DISK} /media/ba
+		sleep 1
 	fi
 
 	# dreamci

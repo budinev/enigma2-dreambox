@@ -6,6 +6,7 @@ from enigma import eTimer, getDesktop, eActionMap, gFont
 from Components.ActionMap import ActionMap
 from sys import maxint
 import skin
+from os import sys
 
 class SubtitleDisplay(Screen):
 	def __init__(self, session):
@@ -42,7 +43,7 @@ class SubtitleDisplay(Screen):
 				return 1
 
 	def showMessage(self, message, hideScreen):
-		padding = (40,10)
+		padding = (40, 10)
 		label = self['message']
 		label.setText(message)
 		size = label.getSize()

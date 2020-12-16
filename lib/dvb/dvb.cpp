@@ -12,6 +12,9 @@
 #include <lib/dvb/dvb.h>
 #include <lib/dvb/sec.h>
 #include <lib/dvb/fbc.h>
+#if defined(HAVE_FCC_ABILITY)
+#include <lib/dvb/fcc.h>
+#endif
 #include <lib/dvb/specs.h>
 #include "filepush.h"
 
@@ -21,6 +24,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
+#include <fstream>
 
 #define MIN(a,b) (a < b ? a : b)
 #define MAX(a,b) (a > b ? a : b)
@@ -114,6 +118,8 @@ eDVBResourceManager::eDVBResourceManager()
 		}
 		num_adapter++;
 	}
+
+	setUsbTuner();
 
 	if (eDVBAdapterLinux::exist(0))
 	{
@@ -277,44 +283,26 @@ eDVBUsbAdapter::eDVBUsbAdapter(int nr)
 	char filename[256];
 	char name[128] = {0};
 	int vtunerid = nr - 1;
-	char buffer[4*1024];
-	char* buf_pos;
-	ssize_t rd;
-	int fd;
 
 	pumpThread = 0;
 
 	int num_fe = 0;
-
-	demuxFd = vtunerFd = pipeFd[0] = pipeFd[1] = -1;
-
-	/* we need to know exactly what frontend is internal or initialized! */
-	fd = open("/proc/bus/nim_sockets", O_RDONLY);
-	if (fd < 0)
+	while (1)
 	{
-		eDebug("[eDVBUsbAdapter] Cannot open /proc/bus/nim_sockets");
-		goto error;
+		/*
+		 * Some frontend devices might have been just created, if
+		 * they are virtual (vtuner) frontends.
+		 * In that case, we cannot be sure the devicenodes are available yet.
+		 * So it is safer to scan for sys entries, than for device nodes
+		 */
+		snprintf(filename, sizeof(filename), "/sys/class/dvb/dvb0.frontend%d", num_fe);
+		if (::access(filename, X_OK) < 0) break;
+		num_fe++;
 	}
-	rd = read(fd, buffer, sizeof(buffer));
-	if (rd < 0)
-	{
-		eDebug("[eDVBUsbAdapter] Cannot read /proc/bus/nim_sockets");
-		goto error;
-	}
-	buf_pos = buffer;
-	while ((buf_pos = strstr(buf_pos, "Frontend_Device: ")) != NULL)
-	{
-		int num_fe_tmp;
-		if (sscanf(buf_pos, "Frontend_Device: %d", &num_fe_tmp) == 1)
-		{
-			if (num_fe_tmp > num_fe)
-				num_fe = num_fe_tmp;
-		}
-		buf_pos += 1;
-	}
-	num_fe++;
 	snprintf(filename, sizeof(filename), "/dev/dvb/adapter0/frontend%d", num_fe);
 	virtualFrontendName = filename;
+
+	demuxFd = vtunerFd = pipeFd[0] = pipeFd[1] = -1;
 
 	/* find the device name */
 	snprintf(filename, sizeof(filename), "/sys/class/dvb/dvb%d.frontend0/device/product", nr);
@@ -738,6 +726,59 @@ void eDVBResourceManager::addAdapter(iDVBAdapter *adapter, bool front)
 
 }
 
+void eDVBResourceManager::setUsbTuner()
+{
+	std::ifstream in("/proc/bus/nim_sockets");
+	std::string line;
+
+	int res = -1;
+	int fe_idx = -1;
+	int usbtuner_idx[8] = {0};
+	int usbtuner_count = 0;
+
+	if (in.is_open())
+	{
+		while(!in.eof())
+		{
+			getline(in, line);
+			if ((res = sscanf(line.c_str(), "NIM Socket %d:", &fe_idx)) == 1)
+				continue;
+
+			if ((fe_idx != -1) && (line.find("\tName: ") == 0) && (line.find("VTUNER") != -1))
+				usbtuner_idx[usbtuner_count++] = fe_idx;
+		}
+		in.close();
+	}
+
+	if (usbtuner_count)
+	{
+		for (eSmartPtrList<eDVBRegisteredFrontend>::iterator it(m_frontend.begin()); it != m_frontend.end(); ++it)
+		{
+			int slotid = it->m_frontend->getSlotID();
+			for (int i=0; i < usbtuner_count ; i++)
+			{
+				if (slotid == usbtuner_idx[i])
+				{
+					it->m_frontend->setUSBTuner(true);
+					break;
+				}
+			}
+		}
+		for (eSmartPtrList<eDVBRegisteredFrontend>::iterator it(m_simulate_frontend.begin()); it != m_simulate_frontend.end(); ++it)
+		{
+			int slotid = it->m_frontend->getSlotID();
+			for (int i=0; i < usbtuner_count ; i++)
+			{
+				if (slotid == usbtuner_idx[i])
+				{
+					it->m_frontend->setUSBTuner(true);
+					break;
+				}
+			}
+		}
+	}
+}
+
 PyObject *eDVBResourceManager::setFrontendSlotInformations(ePyObject list)
 {
 	if (!PyList_Check(list))
@@ -926,7 +967,8 @@ RESULT eDVBResourceManager::allocateFrontend(ePtr<eDVBAllocatedFrontend> &fe, eP
 	eSmartPtrList<eDVBRegisteredFrontend> &frontends = simulate ? m_simulate_frontend : m_frontend;
 	eDVBRegisteredFrontend *best, *fbc_fe, *best_fbc_fe;
 	int bestval, foundone, current_fbc_setid, c;
-	bool check_fbc_leaf_linkable;
+	bool check_fbc_leaf_linkable, is_configured_sat;
+	long link;
 
 	fbc_fe  = NULL;
 	best_fbc_fe = NULL;
@@ -939,6 +981,7 @@ RESULT eDVBResourceManager::allocateFrontend(ePtr<eDVBAllocatedFrontend> &fe, eP
 	for (eSmartPtrList<eDVBRegisteredFrontend>::iterator i(frontends.begin()); i != frontends.end(); ++i)
 	{
 		c = 0;
+		is_configured_sat = false;
 		fbc_fe = NULL;
 		if (i->m_frontend->is_FBCTuner() && m_fbcmng->CanLink(*i))
 		{
@@ -958,7 +1001,27 @@ RESULT eDVBResourceManager::allocateFrontend(ePtr<eDVBAllocatedFrontend> &fe, eP
 			}
 		}
 		else
-			c = i->m_frontend->isCompatibleWith(feparm);
+		{
+			if (i->m_inuse)
+			{
+				i->m_frontend->getData(eDVBFrontend::SATPOS_DEPENDS_PTR, link);
+				if (link != -1)
+					is_configured_sat = true;
+				else
+				{
+					i->m_frontend->getData(eDVBFrontend::ADVANCED_SATPOSDEPENDS_ROOT, link);
+					if (link != -1)
+						is_configured_sat = true;
+					else
+					{
+						i->m_frontend->getData(eDVBFrontend::ADVANCED_SATPOSDEPENDS_LINK, link);
+						if (link != -1)
+							is_configured_sat = true;
+					}
+				}
+			}
+			c = i->m_frontend->isCompatibleWith(feparm, is_configured_sat);
+		}
 
 		if (c)	/* if we have at least one frontend which is compatible with the source, flag this. */
 			foundone = 1;
@@ -984,7 +1047,6 @@ RESULT eDVBResourceManager::allocateFrontend(ePtr<eDVBAllocatedFrontend> &fe, eP
 	}
 
 	fe = 0;
-
 	if (foundone)
 		return errAllSourcesBusy;
 	else
@@ -997,6 +1059,15 @@ RESULT eDVBResourceManager::allocateFrontendByIndex(ePtr<eDVBAllocatedFrontend> 
 	for (eSmartPtrList<eDVBRegisteredFrontend>::iterator i(m_frontend.begin()); i != m_frontend.end(); ++i)
 		if (!i->m_inuse && i->m_frontend->getSlotID() == slot_index)
 		{
+			// check if another slot advanced satpos to this is in use
+			long link;
+			i->m_frontend->getData(eDVBFrontend::ADVANCED_SATPOSDEPENDS_ROOT, link);
+			if ( link != -1 )
+				{
+					eDebug("[eDVBResourceManager] another advanced satpos depending is in use.. so allocateFrontendByIndex not possible!");
+					err = errAllSourcesBusy;
+					goto alloc_fe_by_id_not_possible;
+				}
 			// check if another slot linked to this is in use
 			long tmp;
 			i->m_frontend->getData(eDVBFrontend::SATPOS_DEPENDS_PTR, tmp);
@@ -1484,7 +1555,57 @@ int eDVBResourceManager::canAllocateChannel(const eDVBChannelID &channelid, cons
 
 	int *decremented_cached_channel_fe_usecount=NULL,
 		*decremented_fe_usecount=NULL;
+#if defined(HAVE_FCC_ABILITY)
+	/* check FCC channels */
+	std::vector<int*> fcc_decremented_fe_usecounts;
+	std::map<eDVBChannelID, int> fcc_chids;
+	int apply_to_ignore = 0;
+	if (!eFCCServiceManager::getFCCChannelID(fcc_chids))
+	{
+		for (std::map<eDVBChannelID, int>::iterator i(fcc_chids.begin()); i != fcc_chids.end(); ++i)
+		{
+			//eDebug("[eDVBResourceManager::canAllocateChannel] FCC NS : %08x, TSID : %04x, ONID : %04x", i->first.dvbnamespace.get(), i->first.transport_stream_id.get(), i->first.original_network_id.get());
+			if (ignore == i->first)
+			{
+				apply_to_ignore = i->second;
+				continue;
+			}
+			for (std::list<active_channel>::iterator ii(active_channels.begin()); ii != active_channels.end(); ++ii)
+			{
+				eSmartPtrList<eDVBRegisteredFrontend> &frontends = simulate ? m_simulate_frontend : m_frontend;
+				if (ii->m_channel_id == i->first)
+				{
+					eDVBChannel *channel = (eDVBChannel*) &(*ii->m_channel);
 
+					int check_usecount = channel == &(*m_cached_channel) ? 1 : 0;
+					check_usecount += i->second * 2; // one is used in eDVBServicePMTHandler and another is used in eDVBScan.
+					//eDebug("[eDVBResourceManager::canAllocateChannel] channel->getUseCount() : %d , check_usecount : %d (cached : %d)", channel->getUseCount(), check_usecount, channel == &(*m_cached_channel));
+					if (channel->getUseCount() == check_usecount)
+					{
+						ePtr<iDVBFrontend> fe;
+						if (!ii->m_channel->getFrontend(fe))
+						{
+							for (eSmartPtrList<eDVBRegisteredFrontend>::iterator iii(frontends.begin()); iii != frontends.end(); ++iii)
+							{
+								if ( &(*fe) == &(*iii->m_frontend) )
+								{
+									//eDebug("[eDVBResourceManager::canAllocateChannel] fcc : decrease fcc fe use_count! feid : %d (%d -> %d)", iii->m_frontend->getSlotID(), iii->m_inuse, iii->m_inuse-1);
+									--iii->m_inuse;
+									int *tmp_decremented_fe_usecount = &iii->m_inuse;
+									fcc_decremented_fe_usecounts.push_back(tmp_decremented_fe_usecount);
+									if (channel == &(*m_cached_channel))
+										decremented_cached_channel_fe_usecount = tmp_decremented_fe_usecount;
+									break;
+								}
+							}
+						}
+					}
+					break;
+				}
+			}
+		}
+	}
+#endif
 	for (std::list<active_channel>::iterator i(active_channels.begin()); i != active_channels.end(); ++i)
 	{
 		eSmartPtrList<eDVBRegisteredFrontend> &frontends = simulate ? m_simulate_frontend : m_frontend;
@@ -1496,7 +1617,14 @@ int eDVBResourceManager::canAllocateChannel(const eDVBChannelID &channelid, cons
 			// another on eUsePtr<iDVBChannel> is used in the eDVBScan instance used in eDVBServicePMTHandler (for SDT scan)
 			// so we must check here if usecount is 3 (when the channel is equal to the cached channel)
 			// or 2 when the cached channel is not equal to the compared channel
+#if defined(HAVE_FCC_ABILITY)
+			int check_usecount = channel == &(*m_cached_channel) ? 1 : 0;
+			check_usecount += (apply_to_ignore+1) * 2; // one is used in eDVBServicePMTHandler and another is used in eDVBScan.
+			//eDebug("[eDVBResourceManager] canAllocateChannel channel->getUseCount() : %d , check_usecount : %d (cached : %d)", channel->getUseCount(), check_usecount, channel == &(*m_cached_channel));
+			if (channel->getUseCount() == check_usecount)  // channel only used once..(except fcc)
+#else
 			if (channel == &(*m_cached_channel) ? channel->getUseCount() == 3 : channel->getUseCount() == 2)  // channel only used once..
+#endif
 			{
 				ePtr<iDVBFrontend> fe;
 				if (!i->m_channel->getFrontend(fe))
@@ -1505,6 +1633,7 @@ int eDVBResourceManager::canAllocateChannel(const eDVBChannelID &channelid, cons
 					{
 						if ( &(*fe) == &(*ii->m_frontend) )
 						{
+							//eDebug("[eDVBResourceManager] canAllocateChannel ignore : decrease fcc fe use_count! feid : %d (%d -> %d)", ii->m_frontend->getSlotID(), ii->m_inuse, ii->m_inuse-1);
 							--ii->m_inuse;
 							decremented_fe_usecount = &ii->m_inuse;
 							if (channel == &(*m_cached_channel))
@@ -1567,7 +1696,16 @@ error:
 		++(*decremented_fe_usecount);
 	if (decremented_cached_channel_fe_usecount)
 		++(*decremented_cached_channel_fe_usecount);
-
+#if defined(HAVE_FCC_ABILITY)
+	if (fcc_decremented_fe_usecounts.size())
+	{
+		for (std::vector<int*>::iterator i(fcc_decremented_fe_usecounts.begin()); i != fcc_decremented_fe_usecounts.end(); ++i)
+		{
+			//eDebug("[eDVBResourceManager] canAllocateChannel fcc : increase fcc fe use_count!");
+			++(**i);
+		}
+	}
+#endif
 	return ret;
 }
 

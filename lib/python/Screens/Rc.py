@@ -4,12 +4,8 @@ from __future__ import print_function
 from Components.Pixmap import MovingPixmap, MultiPixmap
 from Tools.Directories import resolveFilename, SCOPE_SKIN
 from xml.etree.ElementTree import ElementTree
-from Components.config import config, ConfigInteger
 from Components.RcModel import rc_model
-from enigma import getBoxType
-from Tools.StbHardware import getBoxProc
-
-config.misc.rcused = ConfigInteger(default = 1)
+from boxbranding import getRCIDNum
 
 class Rc:
 	def __init__(self):
@@ -19,30 +15,22 @@ class Rc:
 		self["arrowup"] = MovingPixmap()
 		self["arrowup2"] = MovingPixmap()
 
-		config.misc.rcused = ConfigInteger(default = 1)
-		self.isDefaultRc = rc_model.rcIsDefault()
 		self.rcheight = 500
 		self.rcheighthalf = 250
 
 		self.selectpics = []
-		self.selectpics.append((self.rcheighthalf, ["arrowdown", "arrowdown2"], (-18,-70)))
-		self.selectpics.append((self.rcheight, ["arrowup", "arrowup2"], (-18,0)))
+		self.selectpics.append((self.rcheighthalf, ["arrowdown", "arrowdown2"], (-18, -70)))
+		self.selectpics.append((self.rcheight, ["arrowup", "arrowup2"], (-18, 0)))
 
 		self.readPositions()
 		self.clearSelectedKeys()
 		self.onShown.append(self.initRc)
 
 	def initRc(self):
-		if self.isDefaultRc or getBoxType() in ("ventonhdx","sezam5000hd","mbtwin","beyonwizt3") or getBoxProc() in ("ini-3000","ini-5000","ini-7000","ini-7012"):
-			self["rc"].setPixmapNum(config.misc.rcused.value)
-		else:
-			self["rc"].setPixmapNum(0)
+		self["rc"].setPixmapNum(0)
 
 	def readPositions(self):
-		if self.isDefaultRc:
-			target = resolveFilename(SCOPE_SKIN, "rcpositions.xml")
-		else:
-			target = rc_model.getRcPositions()
+		target = rc_model.getRcPositions()
 		tree = ElementTree(file = target)
 		rcs = tree.getroot()
 		self.rcs = {}
@@ -68,13 +56,8 @@ class Rc:
 		self["rc"].show()
 
 	def selectKey(self, key):
-		if self.isDefaultRc:
-			rc = self.rcs[config.misc.rcused.value]
-		else:
-			try:
-				rc = self.rcs[2]
-			except:
-				rc = self.rcs[config.misc.rcused.value]
+		rcidnumber = int(getRCIDNum())
+		rc = self.rcs[rcidnumber]
 		if key in rc:
 			rcpos = self["rc"].getPosition()
 			pos = rc[key]

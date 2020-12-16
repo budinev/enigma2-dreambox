@@ -11,6 +11,9 @@
 #include <byteswap.h>
 #include <netinet/in.h>
 
+#include <sys/vfs.h>
+#include <linux/magic.h>
+
 DEFINE_REF(eDVBServiceRecord);
 
 eDVBServiceRecord::eDVBServiceRecord(const eServiceReferenceDVB &ref, bool isstreamclient): m_ref(ref)
@@ -266,6 +269,11 @@ int eDVBServiceRecord::doPrepare()
 				f->open(m_ref.path.c_str());
 				source = ePtr<iTsSource>(f);
 			}
+			m_event((iRecordableService*)this, evPvrTuneStart);
+		}
+		else
+		{
+			m_event((iRecordableService*)this, evTuneStart);
 		}
 		return m_service_handler.tuneExt(m_ref, source, m_ref.path.c_str(), 0, m_simulate, NULL, servicetype, m_descramble);
 	}
@@ -287,9 +295,40 @@ int eDVBServiceRecord::doRecord()
 
 	if (!m_record && m_tuned && !m_streaming && !m_simulate)
 	{
+		int flags = O_WRONLY|O_CREAT|O_LARGEFILE|O_CLOEXEC;
+		struct statfs sbuf;
+
 		eDebug("[eDVBServiceRecord] Recording to %s...", m_filename.c_str());
 		::remove(m_filename.c_str());
-		int fd = ::open(m_filename.c_str(), O_WRONLY | O_CREAT | O_LARGEFILE | O_CLOEXEC, 0666);
+		// We must create a file for statfs
+		int fd = ::open(m_filename.c_str(), flags, 0666);
+		::close(fd);
+		if (statfs(m_filename.c_str(), &sbuf) < 0)
+		{
+			eDebug("[eDVBServiceRecord] Can't get filesystem type assuming none NFS!");
+		}
+		else if (sbuf.f_type == EXT3_SUPER_MAGIC)
+		{
+			eDebug("[eDVBServiceRecord] ext2/3/4 filesystem\n");
+		}
+		else if (sbuf.f_type == NFS_SUPER_MAGIC)
+		{
+			eDebug("[eDVBServiceRecord] NFS filesystem, add O_DIRECT to flags\n");
+			flags |= O_DIRECT;
+		}
+		else if (sbuf.f_type == USBDEVICE_SUPER_MAGIC)
+		{
+			eDebug("[eDVBServiceRecord] USB device\n");
+		}
+		else if (sbuf.f_type == SMB_SUPER_MAGIC)
+		{
+			eDebug("[eDVBServiceRecord] SMB device\n");
+		}
+		else if (sbuf.f_type == MSDOS_SUPER_MAGIC)
+		{
+			eDebug("[eDVBServiceRecord] MSDOS device\n");
+		}
+		fd = ::open(m_filename.c_str(), flags, 0666);
 		if (fd == -1)
 		{
 			eDebug("[eDVBServiceRecord] can't open recording file: %m");
@@ -609,7 +648,7 @@ void eDVBServiceRecord::fixupCuts(std::list<pts_t> &offsets)
 			eDebug("[eDVBServiceRecord] fixing up PTS failed, not saving");
 			continue;
 		}
-		eDebug("[eDVBServiceRecord] fixed up %llx to %llx (offset %llx)", i->second, p, offset);
+		eDebug("[eDVBServiceRecord] fixed up %llx to %llx (offset %ld)", i->second, p, offset);
 		offsets.push_back(p);
 	}
 }

@@ -24,12 +24,15 @@ from Tools.NumericalTextInput import NumericalTextInput
 from Components.ActionMap import NumberActionMap, HelpableActionMap
 from Components.Label import Label
 from Components.Pixmap import Pixmap
+from Components.Sources.StaticText import StaticText
 from Components.Button import Button
 from Components.FileList import FileList
 from Components.MenuList import MenuList
 
 # Timer
 from enigma import eTimer
+
+import six
 
 defaultInhibitDirs = ["/bin", "/boot", "/dev", "/etc", "/lib", "/proc", "/sbin", "/sys", "/var"]
 
@@ -72,7 +75,7 @@ class LocationBox(Screen, NumericalTextInput, HelpableScreen):
 
 		# Set Text
 		self["text"] = Label(text)
-		self["textbook"] = Label(_("Bookmarks"))
+		self["textbook"] = Label(_("Bookmarks") if bookmarks else '')
 
 		# Save parameters locally
 		self.text = text
@@ -93,9 +96,9 @@ class LocationBox(Screen, NumericalTextInput, HelpableScreen):
 
 		# Buttons
 		self["key_green"] = Button(_("OK"))
-		self["key_yellow"] = Button(_("Rename"))
-		self["key_blue"] = Button(_("Remove bookmark"))
 		self["key_red"] = Button(_("Cancel"))
+		self["key_yellow"] = StaticText(_("Rename"))
+		self["key_blue"] = StaticText(_("Remove bookmark") if self.realBookmarks else '')
 
 		# Background for Buttons
 		self["green"] = Pixmap()
@@ -195,24 +198,28 @@ class LocationBox(Screen, NumericalTextInput, HelpableScreen):
 	def showHideRename(self):
 		# Don't allow renaming when filename is empty
 		if not self.filename:
-			self["key_yellow"].hide()
+			self["key_yellow"].setText("")
 
 	def switchToFileList(self):
 		if not self.userMode:
 			self.currList = "filelist"
 			self["filelist"].selectionEnabled(1)
 			self["booklist"].selectionEnabled(0)
-			self["key_blue"].text = _("Add bookmark")
+			self["key_blue"].setText(_("Add bookmark" if self.realBookmarks else None))
 			self.updateTarget()
 
 	def switchToBookList(self):
+		if not self.realBookmarks:
+			return
 		self.currList = "booklist"
 		self["filelist"].selectionEnabled(0)
 		self["booklist"].selectionEnabled(1)
-		self["key_blue"].text = _("Remove bookmark")
+		self["key_blue"].setText(_("Remove bookmark"))
 		self.updateTarget()
 
 	def addRemoveBookmark(self):
+		if not self.realBookmarks:
+			return
 		if self.currList == "filelist":
 			# add bookmark
 			folder = self["filelist"].getSelection()[0]
@@ -241,9 +248,10 @@ class LocationBox(Screen, NumericalTextInput, HelpableScreen):
 			self["booklist"].setList(self.bookmarks)
 
 	def updateBookmarks(self):
-		config.movielist.videodirs.load()
-		self.bookmarks = config.movielist.videodirs and config.movielist.videodirs.value[:] or []
-		self["booklist"].setList(self.bookmarks)
+		if self.realBookmarks:
+			self.realBookmarks.load()
+			self.bookmarks = self.realBookmarks and self.realBookmarks.value[:] or []
+			self["booklist"].setList(self.bookmarks)
 
 	def createDir(self):
 		if self["filelist"].current_directory is not None:
@@ -465,7 +473,7 @@ class LocationBox(Screen, NumericalTextInput, HelpableScreen):
 	def usermodeOn(self):
 		self.switchToBookList()
 		self["filelist"].hide()
-		self["key_blue"].hide()
+		self["key_blue"].SetText("")
 
 	def keyNumberGlobal(self, number):
 		# Cancel Timeout
@@ -484,7 +492,10 @@ class LocationBox(Screen, NumericalTextInput, HelpableScreen):
 
 		# Get char and append to text
 		char = self.getKey(number)
-		self.quickselect = self.quickselect[:self.curr_pos] + unicode(char)
+		if six.PY2:
+			self.quickselect = self.quickselect[:self.curr_pos] + unicode(char)
+		else:
+			self.quickselect = self.quickselect[:self.curr_pos] + char
 
 		# Start Timeout
 		self.qs_timer_type = 0
@@ -541,7 +552,7 @@ class LocationBox(Screen, NumericalTextInput, HelpableScreen):
 		return str(type(self)) + "(" + self.text + ")"
 
 def MovieLocationBox(session, text, dir, filename = "", minFree = None):
-	return LocationBox(session, text = text,  filename = filename, currDir = dir, bookmarks = config.movielist.videodirs, autoAdd = config.movielist.add_bookmark.value , editDir = True, inhibitDirs = defaultInhibitDirs, minFree = minFree)
+	return LocationBox(session, text = text,  filename = filename, currDir = dir, bookmarks = config.movielist.videodirs, autoAdd = config.movielist.add_bookmark.value, editDir = True, inhibitDirs = defaultInhibitDirs, minFree = minFree)
 
 class TimeshiftLocationBox(LocationBox):
 	def __init__(self, session):

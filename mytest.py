@@ -10,9 +10,22 @@ profile("PYTHON_START")
 # Don't remove this line. It may seem to do nothing, but if removed,
 # it will break output redirection for crash logs.
 import Tools.RedirectOutput
-from boxbranding import getVisionVersion, getVisionRevision, getHaveMultiLib
+from Tools.Directories import resolveFilename, fileExists
+from boxbranding import getVisionVersion, getVisionRevision, getHaveMultiLib, getMachineBuild, getSoCFamily
+from enigma import getBoxType, getBoxBrand
+
+model = getBoxType()
+brand = getBoxBrand()
+platform = getMachineBuild()
+socfamily = getSoCFamily()
+
 print("[mytest] Open Vision version = %s" % getVisionVersion())
 print("[mytest] Open Vision revision = %s" % getVisionRevision())
+print("[mytest] Brand/Meta = %s" % brand)
+print("[mytest] Model = %s" % model)
+print("[mytest] Platform = %s" % platform)
+print("[mytest] SoC family = %s" % socfamily)
+
 import enigma
 import eConsoleImpl
 import eBaseImpl
@@ -20,13 +33,12 @@ enigma.eTimer = eBaseImpl.eTimer
 enigma.eSocketNotifier = eBaseImpl.eSocketNotifier
 enigma.eConsoleAppContainer = eConsoleImpl.eConsoleAppContainer
 
-from Components.SystemInfo import SystemInfo
-if not SystemInfo["OpenVisionModule"]:
-	print("[mytest] Open Vision in multiboot! Now we have to remove what relies on our kernel module!")
+if getVisionVersion().startswith("10") and not fileExists ("/var/tmp/ntpv4.local") and platform != "dm4kgen":
 	from Components.Console import Console
+	print("[mytest] Try load all network interfaces.")
 	Console = Console()
-	Console.ePopen('opkg remove enigma2-plugin-extensions-e2iplayer')
-	print("[mytest] Removed, this is on you not us!")
+	Console.ePopen('/etc/init.d/networking restart ; /etc/init.d/samba.sh restart ; mount -a -t nfs,smbfs,cifs,ncpfs')
+	print("[mytest] All network interfaces loaded.")
 
 from traceback import print_exc
 
@@ -72,7 +84,7 @@ profile("config.misc")
 config.misc.radiopic = ConfigText(default = resolveFilename(SCOPE_CURRENT_SKIN, "radio.mvi"))
 config.misc.blackradiopic = ConfigText(default = resolveFilename(SCOPE_CURRENT_SKIN, "black.mvi"))
 config.misc.useTransponderTime = ConfigYesNo(default=False)
-config.misc.SyncTimeUsing = ConfigSelection(default = "0", choices = [("0", _("Transponder time")), ("1", _("NTP"))])
+config.misc.SyncTimeUsing = ConfigSelection(default = "1", choices = [("0", _("Transponder time")), ("1", _("NTP"))])
 config.misc.NTPserver = ConfigText(default = 'pool.ntp.org', fixed_size=False)
 config.misc.startCounter = ConfigInteger(default=0) # number of e2 starts...
 config.misc.standbyCounter = NoSave(ConfigInteger(default=0)) # number of standby
@@ -132,10 +144,21 @@ try:
 
 	def runReactor():
 		reactor.run(installSignalHandlers=False)
-except ImportError:
+except ImportError as e:
 	print("[mytest] twisted not available")
 	def runReactor():
 		enigma.runMainloop()
+
+try:
+	from twisted.python import log
+	config.misc.enabletwistedlog = ConfigYesNo(default = False)
+	if config.misc.enabletwistedlog.value == True:
+		log.startLogging(open('/tmp/twisted.log', 'w'))
+	else:
+		log.startLogging(sys.stdout)
+except ImportError:
+	print("twisted not available")
+	pass
 
 profile("LOAD:Plugin")
 
@@ -176,7 +199,7 @@ from Screens.SessionGlobals import SessionGlobals
 from Screens.Screen import Screen
 
 profile("Screen")
-Screen.global_screen = Globals()
+Screen.globalScreen = Globals()
 
 # Session.open:
 # * push current active dialog ('current_dialog') onto stack
@@ -523,8 +546,8 @@ def runScreenTest():
 	profile("Init:PowerKey")
 	power = PowerKey(session)
 
-	from enigma import getBoxType
-	if SystemInfo in ["FirstCheckModel","SecondCheckModel","ThirdCheckModel","DifferentLCDSettings"] or getBoxType() in ("alphatriplehd","tmtwin4k","osminiplus","sf3038","spycat","et7x00","ebox5000","ebox7358","eboxlumi","maram9","sezam5000hd","mbtwin","sezam1000hd","mbmini","atemio5x00","beyonwizt3","dinoboth265","axashistwin"):
+	from Components.SystemInfo import SystemInfo
+	if SystemInfo["VFDSymbol"]:
 		profile("VFDSYMBOLS")
 		import Components.VfdSymbols
 		Components.VfdSymbols.SymbolsCheck(session)
@@ -556,16 +579,15 @@ def runScreenTest():
 	wakeupList.sort()
 	if wakeupList:
 		from time import strftime
-		from enigma import getBoxBrand
 		startTime = wakeupList[0]
 		if (startTime[0] - nowTime) < 270: # no time to switch box back on
 			wptime = nowTime + 30  # so switch back on in 30 seconds
 		else:
-			if getBoxBrand() == 'gigablue':
+			if brand == "gigablue":
 				wptime = startTime[0] - 120 # GigaBlue already starts 2 min. before wakeup time
 			else:
 				wptime = startTime[0] - 240
-		if not config.misc.SyncTimeUsing.value == "0" or getBoxBrand() == 'gigablue':
+		if not config.misc.SyncTimeUsing.value == "0" or brand == "gigablue":
 			print("[mytest] dvb time sync disabled... so set RTC now to current linux time!", strftime("%Y/%m/%d %H:%M", localtime(nowTime)))
 			setRTCtime(nowTime)
 		print("[mytest] set wakeup time to", strftime("%Y/%m/%d %H:%M", localtime(wptime)))
@@ -575,6 +597,8 @@ def runScreenTest():
 		config.misc.prev_wakeup_time_type.save()
 	else:
 		config.misc.prev_wakeup_time.value = 0
+#		if not model.startswith('azboxm'): # skip for AZBox (mini)me - setting wakeup time to past reboots box 
+#			setFPWakeuptime(int(nowTime) - 3600) # minus one hour -> overwrite old wakeup time
 	config.misc.prev_wakeup_time.save()
 
 	profile("stopService")
@@ -647,13 +671,13 @@ import Components.Lcd
 Components.Lcd.InitLcd()
 Components.Lcd.IconCheck()
 
-if SystemInfo["DreamBoxHDMIin"]:
-	check = open("/proc/stb/hdmi-rx/0/hdmi_rx_monitor","r").read()
+if platform == "dm4kgen" or model in ("dm7080", "dm820"):
+	check = open("/proc/stb/hdmi-rx/0/hdmi_rx_monitor", "r").read()
 	if check.startswith("on"):
-		open("/proc/stb/hdmi-rx/0/hdmi_rx_monitor","w").write("off")
-	checkaudio = open("/proc/stb/audio/hdmi_rx_monitor","r").read()
+		open("/proc/stb/hdmi-rx/0/hdmi_rx_monitor", "w").write("off")
+	checkaudio = open("/proc/stb/audio/hdmi_rx_monitor", "r").read()
 	if checkaudio.startswith("on"):
-		open("/proc/stb/audio/hdmi_rx_monitor","w").write("off")
+		open("/proc/stb/audio/hdmi_rx_monitor", "w").write("off")
 
 profile("RFMod")
 import Components.RFmod

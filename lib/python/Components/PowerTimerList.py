@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from enigma import eListboxPythonMultiContent, eListbox, gFont, getDesktop, RT_HALIGN_LEFT, RT_HALIGN_RIGHT, RT_VALIGN_BOTTOM
-from GUIComponent import GUIComponent
+from Components.GUIComponent import GUIComponent
 from skin import parseFont
 from Tools.FuzzyDate import FuzzyTime
 from Tools.LoadPixmap import LoadPixmap
@@ -11,6 +11,10 @@ from PowerTimer import AFTEREVENT, TIMERTYPE
 
 
 class PowerTimerList(GUIComponent, object):
+
+#  | <Service>     <Name of the Timer>  |
+#  | <start, end>              <state>  |
+
 	def buildTimerEntry(self, timer, processed):
 		screenwidth = getDesktop(0).size().width()
 		timertype = {
@@ -79,7 +83,7 @@ class PowerTimerList(GUIComponent, object):
 				if self.iconRepeat:
 					res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, 2, self.rowSplit, 20, 20, self.iconRepeat))
 			else:
-				repeatedtext = begin[0]
+				repeatedtext = begin[0] # date
 			text = repeatedtext + ((" %s ... %s (%d " + _("mins") + ")") % (begin[1], FuzzyTime(timer.end)[1], (timer.end - timer.begin) / 60))
 			res.append((eListboxPythonMultiContent.TYPE_TEXT, 148, self.itemHeight - self.rowSplit, width-150, self.rowSplit, 2, RT_HALIGN_RIGHT|RT_VALIGN_BOTTOM, text))
 			icon = None
@@ -110,9 +114,9 @@ class PowerTimerList(GUIComponent, object):
 		if timer.failed:
 			state = _("failed")
 			icon = self.iconFailed
-		icon and res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, self.iconMargin / 2, (self.rowSplit - self.iconHeight) / 2, self.iconWidth, self.iconHeight, icon))
+		icon and res.append((eListboxPythonMultiContent.TYPE_PIXMAP_ALPHABLEND, self.iconMargin / 6, (self.rowSplit - self.iconHeight) / 6, self.iconWidth, self.iconHeight, icon))
 
-		res.append((eListboxPythonMultiContent.TYPE_TEXT, self.iconMargin + self.iconWidth, self.rowSplit, 150, height - self.rowSplit, 2, RT_HALIGN_LEFT|RT_VALIGN_BOTTOM, state))
+		res.append((eListboxPythonMultiContent.TYPE_TEXT, self.iconMargin + self.iconWidth, self.rowSplit, 400, height - self.rowSplit, 2, RT_HALIGN_LEFT|RT_VALIGN_BOTTOM, state))
 
 
 		line = LoadPixmap(resolveFilename(SCOPE_CURRENT_SKIN, "div-h.png"))
@@ -147,11 +151,11 @@ class PowerTimerList(GUIComponent, object):
 		def itemHeight(value):
 			self.itemHeight = int(value)
 		def setServiceNameFont(value):
-			self.serviceNameFont = parseFont(value, ((1,1),(1,1)))
+			self.serviceNameFont = parseFont(value, ((1, 1), (1, 1)))
 		def setEventNameFont(value):
-			self.eventNameFont = parseFont(value, ((1,1),(1,1)))
+			self.eventNameFont = parseFont(value, ((1, 1), (1, 1)))
 		def setFont(value):
-			self.font = parseFont(value, ((1,1),(1,1)))
+			self.font = parseFont(value, ((1, 1), (1, 1)))
 		def rowSplit(value):
 			self.rowSplit = int(value)
 		def iconMargin(value):

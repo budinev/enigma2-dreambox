@@ -4,16 +4,16 @@ from __future__ import print_function
 from Screens.Wizard import WizardSummary
 from Screens.WizardLanguage import WizardLanguage
 from Screens.Rc import Rc
-from VideoHardware import video_hw
-
+from Plugins.SystemPlugins.Videomode.VideoHardware import video_hw
+from Components.Sources.StaticText import StaticText
+from Components.Label import Label
 from Components.Pixmap import Pixmap
 from Components.config import config, ConfigBoolean, configfile
 from Components.SystemInfo import SystemInfo
-from enigma import getBoxType
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS
+from boxbranding import getHaveHDMI
 
-hw_type = getBoxType()
-has_hdmi = hw_type not in ("dm800","dm8000")
+has_hdmi = getHaveHDMI() == "True"
 
 config.misc.showtestcard = ConfigBoolean(default = False)
 
@@ -60,7 +60,12 @@ class VideoWizard(WizardLanguage, Rc):
 		Rc.__init__(self)
 		self["wizard"] = Pixmap()
 		self["portpic"] = Pixmap()
-
+		self["lab1"] = StaticText(_("OpenVision"))
+		self["lab2"] = StaticText(_("Lets define enigma2 once more"))
+		self["lab3"] = StaticText(_("Report problems to:"))
+		self["lab4"] = StaticText(_("https://openvision.tech"))
+		self["lab5"] = StaticText(_("Sources are available at:"))
+		self["lab6"] = StaticText(_("https://github.com/OpenVisionE2"))
 		self.port = None
 		self.mode = None
 		self.rate = None
@@ -86,7 +91,7 @@ class VideoWizard(WizardLanguage, Rc):
 				if descr == 'DVI' and has_hdmi:
 					descr = 'HDMI'
 				if port != "DVI-PC":
-					list.append((descr,port))
+					list.append((descr, port))
 		list.sort(key = lambda x: x[0])
 		print("[Videomode] VideoWizard listInputChannels:", list)
 		return list
@@ -184,7 +189,7 @@ class VideoWizard(WizardLanguage, Rc):
 			config.misc.showtestcard.value = False
 
 	def keyNumberGlobal(self, number):
-		if number in (1,2,3):
+		if number in (1, 2, 3):
 			if number == 1:
 				self.hw.saveMode("DVI", "720p", "multi")
 			elif number == 2:

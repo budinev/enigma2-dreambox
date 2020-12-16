@@ -3,11 +3,12 @@
 from __future__ import print_function
 import errno
 import inspect
-import os
+import os, sys
 
 from enigma import eEnv, getDesktop
 from re import compile
 from stat import S_IMODE
+import six
 
 pathExists = os.path.exists
 isMount = os.path.ismount
@@ -83,18 +84,18 @@ defaultPaths = {
 
 def resolveFilename(scope, base="", path_prefix=None):
 	# You can only use the ~/ if we have a prefix directory.
-	if base.startswith("~/"):
+	if str(base).startswith("~/"):
 		assert path_prefix is not None  # Assert only works in debug mode!
 		if path_prefix:
 			base = os.path.join(path_prefix, base[2:])
 		else:
 			print("[Directories] Warning: resolveFilename called with base starting with '~/' but 'path_prefix' is None!")
 	# Don't further resolve absolute paths.
-	if base.startswith("/"):
+	if str(base).startswith("/"):
 		return os.path.normpath(base)
 	# If an invalid scope is specified log an error and return None.
 	if scope not in defaultPaths:
-		print("[Directories] Error: Invalid scope=%d provided to resolveFilename!" % scope)
+		print("[Directories] Error: Invalid scope=%str provided to resolveFilename!" % scope)
 		return None
 	# Ensure that the defaultPaths directories that should exist do exist.
 	path, flag = defaultPaths.get(scope)
@@ -326,7 +327,10 @@ def getRecordingFilename(basename, dirname=None):
 	# but must not truncate in the middle of a multi-byte utf8 character!
 	# So convert the truncation to unicode and back, ignoring errors, the
 	# result will be valid utf8 and so xml parsing will be OK.
-	filename = unicode(filename[:247], "utf8", "ignore").encode("utf8", "ignore")
+	if six.PY2:
+		filename = unicode(filename[:247], "utf8", "ignore").encode("utf8", "ignore")
+	else:
+		filename = filename[:247]
 	if dirname is not None:
 		if not dirname.startswith("/"):
 			dirname = os.path.join(defaultRecordingLocation(), dirname)

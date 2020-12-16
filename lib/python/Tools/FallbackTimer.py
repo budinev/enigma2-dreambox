@@ -32,7 +32,7 @@ class FallbackTimerList():
 	def cleanServiceRef(self, service_ref):
 		service_ref = str(service_ref)
 		if not service_ref.endswith(":"):
-		    service_ref = service_ref.rsplit("::", 1)[0] + ":"
+			service_ref = service_ref.rsplit("::", 1)[0] + ":"
 		return service_ref
 
 	def getUrl(self, url):
@@ -102,8 +102,8 @@ class FallbackTimerList():
 			self.cleanServiceRef(timer.service_ref),
 			timer.begin,
 			timer.end,
-			quote(timer.name.decode('utf8').encode('utf8','ignore')),
-			quote(timer.description.decode('utf8').encode('utf8','ignore')),
+			quote(timer.name.decode('utf8').encode('utf8', 'ignore')),
+			quote(timer.description.decode('utf8').encode('utf8', 'ignore')),
 			timer.disabled,
 			timer.justplay,
 			timer.afterEvent,
@@ -120,8 +120,8 @@ class FallbackTimerList():
 			self.cleanServiceRef(timer.service_ref),
 			timer.begin,
 			timer.end,
-			quote(timer.name.decode('utf8').encode('utf8','ignore')),
-			quote(timer.description.decode('utf8').encode('utf8','ignore')),
+			quote(timer.name.decode('utf8').encode('utf8', 'ignore')),
+			quote(timer.description.decode('utf8').encode('utf8', 'ignore')),
 			timer.disabled,
 			timer.justplay,
 			timer.afterEvent,

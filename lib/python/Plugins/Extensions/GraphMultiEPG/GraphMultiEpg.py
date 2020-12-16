@@ -38,6 +38,7 @@ from time import localtime, time, strftime, mktime
 from Components.PluginComponent import plugins
 from Plugins.Plugin import PluginDescriptor
 from Tools.BoundFunction import boundFunction
+import six
 
 MAX_TIMELINES = 6
 
@@ -47,7 +48,8 @@ config.misc.graph_mepg.prev_time_period = ConfigInteger(default = 120, limits = 
 now_time = [x for x in localtime()]
 now_time[3] = 20
 now_time[4] = 30
-config.misc.graph_mepg.prime_time = ConfigClock(default =  mktime(now_time))
+now_time_tuple = (now_time[0], now_time[1], now_time[2], now_time[3], now_time[4], 0, 0, 0, 0)
+config.misc.graph_mepg.prime_time = ConfigClock(default =  mktime(now_time_tuple))
 config.misc.graph_mepg.ev_fontsize = ConfigSelectionNumber(default = 0, stepwidth = 1, min = -12, max = 12, wraparound = True)
 config.misc.graph_mepg.items_per_page = ConfigSelectionNumber(min = 3, max = 40, stepwidth = 1, default = 6, wraparound = True)
 config.misc.graph_mepg.items_per_page_listscreen = ConfigSelectionNumber(min = 3, max = 60, stepwidth = 1, default = 12, wraparound = True)
@@ -64,12 +66,12 @@ config.misc.graph_mepg.servicetitle_mode = ConfigSelection(default = "picon+serv
 config.misc.graph_mepg.roundTo = ConfigSelection(default = "900", choices = [("900", _("%d minutes") % 15), ("1800", _("%d minutes") % 30), ("3600", _("%d minutes") % 60)])
 config.misc.graph_mepg.OKButton = ConfigSelection(default = "info", choices = [("info", _("Show detailed event info")), ("zap", _("Zap to selected channel")), ("zap+exit", _("Zap to selected channel and exit GMEPG"))])
 possibleAlignmentChoices = [
-	( str(RT_HALIGN_LEFT   | RT_VALIGN_CENTER          ) , _("left")),
-	( str(RT_HALIGN_CENTER | RT_VALIGN_CENTER          ) , _("centered")),
-	( str(RT_HALIGN_RIGHT  | RT_VALIGN_CENTER          ) , _("right")),
-	( str(RT_HALIGN_LEFT   | RT_VALIGN_CENTER | RT_WRAP) , _("left, wrapped")),
-	( str(RT_HALIGN_CENTER | RT_VALIGN_CENTER | RT_WRAP) , _("centered, wrapped")),
-	( str(RT_HALIGN_RIGHT  | RT_VALIGN_CENTER | RT_WRAP) , _("right, wrapped"))]
+	( str(RT_HALIGN_LEFT   | RT_VALIGN_CENTER          ), _("left")),
+	( str(RT_HALIGN_CENTER | RT_VALIGN_CENTER          ), _("centered")),
+	( str(RT_HALIGN_RIGHT  | RT_VALIGN_CENTER          ), _("right")),
+	( str(RT_HALIGN_LEFT   | RT_VALIGN_CENTER | RT_WRAP), _("left, wrapped")),
+	( str(RT_HALIGN_CENTER | RT_VALIGN_CENTER | RT_WRAP), _("centered, wrapped")),
+	( str(RT_HALIGN_RIGHT  | RT_VALIGN_CENTER | RT_WRAP), _("right, wrapped"))]
 config.misc.graph_mepg.event_alignment = ConfigSelection(default = possibleAlignmentChoices[0][0], choices = possibleAlignmentChoices)
 config.misc.graph_mepg.show_timelines = ConfigSelection(default = "all", choices = [("nothing", _("no")), ("all", _("all")), ("now", _("actual time only"))])
 config.misc.graph_mepg.servicename_alignment = ConfigSelection(default = possibleAlignmentChoices[0][0], choices = possibleAlignmentChoices)
@@ -188,7 +190,7 @@ class EPGList(GUIComponent):
 
 	def applySkin(self, desktop, screen):
 		def EntryFont(value):
-			font = parseFont(value, ((1,1),(1,1)) )
+			font = parseFont(value, ((1, 1), (1, 1)) )
 			self.entryFontName = font.family
 			self.entryFontSize = font.pointSize
 		def EntryForegroundColor(value):
@@ -216,7 +218,7 @@ class EPGList(GUIComponent):
 		def EventNamePadding(value):
 			self.eventNamePadding = int(value)
 		def ServiceFont(value):
-			self.serviceFont = parseFont(value, ((1,1),(1,1)))
+			self.serviceFont = parseFont(value, ((1, 1), (1, 1)))
 		def ServiceForegroundColor(value):
 			self.foreColorService = parseColor(value).argb()
 		def ServiceForegroundColorSelected(value):
@@ -293,7 +295,7 @@ class EPGList(GUIComponent):
 	def getIndexFromService(self, serviceref):
 		if serviceref is not None:
 			for x in range(len(self.list)):
-				if CompareWithAlternatives(self.list[x][0], serviceref.toString()):
+				if CompareWithAlternatives(self.list[x][0], serviceref):
 					return x
 		return None
 
@@ -453,7 +455,7 @@ class EPGList(GUIComponent):
 		selected = self.cur_service[0] == service
 
 		# Picon and Service name
-		if CompareWithAlternatives(service, self.currentlyPlaying and self.currentlyPlaying.toString()):
+		if CompareWithAlternatives(service, self.currentlyPlaying and self.currentlyPlaying):
 			serviceForeColor = self.foreColorServiceSelected
 			serviceBackColor = self.backColorServiceSelected
 			bgpng = self.curSerPix or self.nowEvPix
@@ -667,7 +669,7 @@ class EPGList(GUIComponent):
 			entry = entries[self.cur_event] #(event_id, event_title, begin_time, duration)
 			time_base = self.time_base + self.offs*self.time_epoch * 60
 			xpos, width = self.calcEntryPosAndWidth(self.event_rect, time_base, self.time_epoch, entry[2], entry[3])
-			self.select_rect = Rect(xpos ,0, width, self.event_rect.height)
+			self.select_rect = Rect(xpos, 0, width, self.event_rect.height)
 			self.l.setSelectionClip(eRect(xpos, 0, width, self.event_rect.h), visible and update)
 		else:
 			self.select_rect = self.event_rect
@@ -893,13 +895,13 @@ class GraphMultiEPG(Screen, HelpableScreen):
 					epg_bouquet = epg_bouquet)
 
 		HelpableScreen.__init__(self)
-		self["okactions"] = HelpableActionMap(self, "OkCancelActions",
+		self["okactions"] = HelpableActionMap(self, ["OkCancelActions"],
 			{
 				"cancel": (self.closeScreen,   _("Exit EPG")),
 				"ok":	  (self.eventSelected, _("Zap to selected channel, or show detailed event info (depends on configuration)"))
 			}, -1)
 		self["okactions"].csel = self
-		self["gmepgactions"] = HelpableActionMap(self, "GMEPGSelectActions",
+		self["gmepgactions"] = HelpableActionMap(self, ["GMEPGSelectActions"],
 			{
 				"timerAdd":    (self.timerAdd,       _("Add/remove change timer for current event")),
 				"info":        (self.infoKeyPressed, _("Show detailed event info")),
@@ -915,11 +917,13 @@ class GraphMultiEPG(Screen, HelpableScreen):
 				"preview":     (self.preview,        _("Preview selected channel")),
 				"window":      (self.showhideWindow, _("Show/hide window")),
 				"nextDay":     (self.nextDay,        _("Goto next day of events")),
-				"prevDay":     (self.prevDay,        _("Goto previous day of events"))
+				"prevDay":     (self.prevDay,        _("Goto previous day of events")),
+				"moveUp":      (self.moveUp,         _("Goto up service")),
+				"moveDown":    (self.moveDown,      _("Goto down service"))
 			}, -1)
 		self["gmepgactions"].csel = self
 
-		self["inputactions"] = HelpableActionMap(self, "InputActions",
+		self["inputactions"] = HelpableActionMap(self, ["InputActions"],
 			{
 				"left":  (self.leftPressed,  _("Go to previous event")),
 				"right": (self.rightPressed, _("Go to next event")),
@@ -943,6 +947,14 @@ class GraphMultiEPG(Screen, HelpableScreen):
 		self.onLayoutFinish.append(self.onCreate)
 		self.previousref = self.session.nav.getCurrentlyPlayingServiceOrGroup()
 		self.fallbackTimer = FallbackTimerList(self, self.onCreate)
+
+	def moveUp(self):
+		self.showhideWindow(True)
+		self["list"].moveTo(eListbox.moveUp)
+
+	def moveDown(self):
+		self.showhideWindow(True)
+		self["list"].moveTo(eListbox.moveDown)
 
 	def prevPage(self):
 		self.showhideWindow(True)
@@ -1133,8 +1145,12 @@ class GraphMultiEPG(Screen, HelpableScreen):
 		text = _("Select action")
 		event = self["list"].getCurrent()[0]
 		if event:
-			menu = [(p.name, boundFunction(self.runPlugin, p)) for p in plugins.getPlugins(where = PluginDescriptor.WHERE_EVENTINFO) \
-				if 'selectedevent' in p.__call__.func_code.co_varnames]
+			if six.PY2:
+				menu = [(p.name, boundFunction(self.runPlugin, p)) for p in plugins.getPlugins(where = PluginDescriptor.WHERE_EVENTINFO) \
+					if 'selectedevent' in p.__call__.func_code.co_varnames]
+			else:
+				menu = [(p.name, boundFunction(self.runPlugin, p)) for p in plugins.getPlugins(where = PluginDescriptor.WHERE_EVENTINFO) \
+					if 'selectedevent' in p.__call__.__code__.co_varnames]
 			if menu:
 				text += ": %s" % event.getEventName()
 			keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "red", "green", "yellow"][:len(menu)] + (len(menu) - 13) * [""] + keys
@@ -1254,12 +1270,12 @@ class GraphMultiEPG(Screen, HelpableScreen):
 		if repeat:
 			if record:
 				title_text = _("Repeating event currently recording.\nWhat do you want to do?")
-				menu = [(_("Stop current event but not coming events"), "stoponlycurrent"),(_("Stop current event and disable coming events"), "stopall")]
+				menu = [(_("Stop current event but not coming events"), "stoponlycurrent"), (_("Stop current event and disable coming events"), "stopall")]
 				if not timer.disabled:
 					menu.append((_("Don't stop current event but disable coming events"), "stoponlycoming"))
 			else:
 				title_text = _("Attention, this is repeated timer!\nWhat do you want to do?")
-				menu = [(_("Disable current event but not coming events"), "nextonlystop"),(_("Disable timer"), "simplestop")]
+				menu = [(_("Disable current event but not coming events"), "nextonlystop"), (_("Disable timer"), "simplestop")]
 			self.session.openWithCallback(boundFunction(self.runningEventCallback, timer, state), ChoiceBox, title=title_text, list=menu)
 		elif timer.state == state:
 			if timer.external:
@@ -1321,7 +1337,7 @@ class GraphMultiEPG(Screen, HelpableScreen):
 			isRunning = prev_state in (1, 2)
 			title_text = isRepeat and _("Attention, this is repeated timer!\n") or ""
 			firstNextRepeatEvent = isRepeat and (begin < timer.begin <= end or timer.begin <= begin <= timer.end) and not timer.justplay
-			menu = [(_("Delete timer"), "delete"),(_("Edit timer"), "edit")]
+			menu = [(_("Delete timer"), "delete"), (_("Edit timer"), "edit")]
 			buttons = ["red", "green"]
 			if not isRunning:
 				if firstNextRepeatEvent and timer.isFindRunningEvent() and not timer.isFindNextEvent():

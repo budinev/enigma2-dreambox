@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from __future__ import print_function
-from Screen import Screen
+from Screens.Screen import Screen
 from Screens.ParentalControlSetup import ProtectedScreen
 from enigma import eConsoleAppContainer, eDVBDB, eTimer
 
@@ -25,6 +25,7 @@ from Tools.LoadPixmap import LoadPixmap
 
 from time import time
 import os
+import six
 
 language.addCallback(plugins.reloadPlugins)
 
@@ -64,7 +65,7 @@ class PluginBrowser(Screen, ProtectedScreen):
 		self.list = []
 		self["list"] = PluginList(self.list)
 
-		self["actions"] = ActionMap(["WizardActions","MenuActions"],
+		self["actions"] = ActionMap(["WizardActions", "MenuActions"],
 		{
 			"ok": self.save,
 			"back": self.close,
@@ -240,11 +241,11 @@ class PluginBrowser(Screen, ProtectedScreen):
 		self.checkWarnings()
 
 	def openExtensionmanager(self):
-		if fileExists(resolveFilename(SCOPE_PLUGINS, "SystemPlugins/SoftwareManager/plugin.pyo")):
+		if fileExists(resolveFilename(SCOPE_PLUGINS, "SystemPlugins/SoftwareManager/plugin.pyo")) or fileExists(resolveFilename(SCOPE_PLUGINS, "SystemPlugins/SoftwareManager/plugin.py")):
 			try:
 				from Plugins.SystemPlugins.SoftwareManager.plugin import PluginManager
-			except ImportError:
-				self.session.open(MessageBox, _("The software management extension is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO,timeout = 10 )
+			except ImportError as e:
+				self.session.open(MessageBox, _("The software management extension is not installed!\nPlease install it."), type = MessageBox.TYPE_INFO, timeout = 10 )
 			else:
 				self.session.openWithCallback(self.PluginDownloadBrowserClosed, PluginManager)
 
@@ -341,7 +342,7 @@ class PluginDownloadBrowser(Screen):
 			if dest.startswith('/'):
 				# Custom install path, add it to the list too
 				dest = os.path.normpath(dest)
-				extra = '--add-dest %s:%s -d %s' % (dest,dest,dest)
+				extra = '--add-dest %s:%s -d %s' % (dest, dest, dest)
 				Opkg.opkgAddDestination(dest)
 			else:
 				extra = '-d ' + dest
@@ -481,6 +482,8 @@ class PluginDownloadBrowser(Screen):
 
 	def dataAvail(self, str):
 		#prepend any remaining data from the previous call
+		if six.PY3:
+			str = str.decode()
 		str = self.remainingdata + str
 		#split in lines
 		lines = str.split('\n')
@@ -503,15 +506,26 @@ class PluginDownloadBrowser(Screen):
 				plugin = x.split(" - ", 2)
 				# 'opkg list_installed' only returns name + version, no description field
 				if len(plugin) >= 2:
-					if not plugin[0].endswith('-dev') and not plugin[0].endswith('-staticdev') and not plugin[0].endswith('-dbg') and not plugin[0].endswith('-doc') and not plugin[0].endswith('-src'):
-						if plugin[0] not in self.installedplugins:
-							if self.type == self.DOWNLOAD:
-								self.installedplugins.append(plugin[0])
-							else:
-								if len(plugin) == 2:
-									plugin.append('')
-								plugin.append(plugin[0][15:])
-								self.pluginlist.append(plugin)
+					if config.misc.extraopkgpackages.value is True:
+						if not plugin[0].endswith('--pycache--'):
+							if plugin[0] not in self.installedplugins:
+								if self.type == self.DOWNLOAD:
+									self.installedplugins.append(plugin[0])
+								else:
+									if len(plugin) == 2:
+										plugin.append('')
+									plugin.append(plugin[0][15:])
+									self.pluginlist.append(plugin)
+					else:
+						if not plugin[0].endswith('-dev') and not plugin[0].endswith('-staticdev') and not plugin[0].endswith('-dbg') and not plugin[0].endswith('-doc') and not plugin[0].endswith('-src') and not plugin[0].endswith('-po') and not plugin[0].endswith('--pycache--'):
+							if plugin[0] not in self.installedplugins:
+								if self.type == self.DOWNLOAD:
+									self.installedplugins.append(plugin[0])
+								else:
+									if len(plugin) == 2:
+										plugin.append('')
+									plugin.append(plugin[0][15:])
+									self.pluginlist.append(plugin)
 
 	def updateList(self):
 		list = []

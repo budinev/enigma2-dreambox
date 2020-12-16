@@ -13,7 +13,7 @@ from Components.ScrollLabel import ScrollLabel
 from Components.Button import Button
 from Components.Label import Label
 from Components.ProgressBar import ProgressBar
-from Tools.StbHardware import getFPVersion, getBoxProc, getHWSerial, getBoxRCType
+from Tools.StbHardware import getFPVersion, getBoxProc, getBoxProcType, getHWSerial, getBoxRCType
 from enigma import eTimer, eLabel, eConsoleAppContainer, getDesktop, eGetEnigmaDebugLvl, getBoxType, getBoxBrand
 from Tools.Directories import fileExists, fileHas, pathExists
 from Components.GUIComponent import GUIComponent
@@ -22,20 +22,43 @@ from Components.Console import Console
 from Components.Pixmap import MultiPixmap
 from Components.Network import iNetwork
 from Components.SystemInfo import SystemInfo
-from re import search
 from Tools.Geolocation import geolocation
+try:
+	import urllib2
+except:
+	import urllib
+import six
 
 class About(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.setTitle(_("About"))
+		self["lab1"] = StaticText(_("OpenVision"))
+		self["lab2"] = StaticText(_("Lets define enigma2 once more"))
+		self["lab3"] = StaticText(_("Report problems to:"))
+		self["lab4"] = StaticText(_("https://openvision.tech"))
+		self["lab5"] = StaticText(_("Sources are available at:"))
+		self["lab6"] = StaticText(_("https://github.com/OpenVisionE2"))
 		hddsplit = skin.parameters.get("AboutHddSplit", 0)
 
-		procmodel = getBoxProc()
+		model = getBoxType()
 
-		AboutText = _("Hardware: ") + getBoxType() + "\n"
-		if procmodel != getBoxType():
+		try:
+			procmodel = getBoxProc()
+		except:
+			procmodel = boxbranding.getMachineProcModel()
+
+		stbplatform = boxbranding.getMachineBuild()
+
+		AboutText = _("Hardware: ") + model + "\n"
+		if stbplatform != model:
+			AboutText += _("Platform: ") + stbplatform + "\n"
+		if procmodel != model:
 			AboutText += _("Proc model: ") + procmodel + "\n"
+
+		procmodeltype = getBoxProcType()
+		if procmodeltype is not None and procmodeltype != "unknown":
+			AboutText += _("Hardware type: ") + procmodeltype + "\n"
 
 		hwserial = getHWSerial()
 		if hwserial is not None and hwserial != "unknown":
@@ -43,22 +66,30 @@ class About(Screen):
 		if hwserial is not None and hwserial == "unknown":
 			AboutText += _("Hardware serial: ") + about.getCPUSerial() + "\n"
 
-		AboutText += _("Brand/Meta: ") + getBoxBrand() + "\n"
+		if fileExists("/proc/stb/info/release"):
+			hwrelease = open("/proc/stb/info/release", "r").read().strip()
+			AboutText += _("Factory release: ") + hwrelease + "\n"
 
-		boxrctype = getBoxRCType()
-		if boxrctype is not None and boxrctype != "unknown":
-			AboutText += _("RC type: ") + boxrctype + "\n"
-		if boxrctype is not None and boxrctype == "unknown":
-			if fileExists("/usr/bin/remotecfg"):
-				AboutText += _("RC type: ") + _("Amlogic remote") + "\n"
-			elif fileExists("/usr/sbin/lircd"):
-				AboutText += _("RC type: ") + _("LIRC remote") + "\n"
+		AboutText += _("Brand/Meta: ") + getBoxBrand() + "\n"
 
 		AboutText += "\n"
 		cpu = about.getCPUInfoString()
 		AboutText += _("CPU: ") + cpu + "\n"
 		AboutText += _("CPU brand: ") + about.getCPUBrand() + "\n"
+
+		socfamily = boxbranding.getSoCFamily()
+		if socfamily is not None:
+			AboutText += _("SoC family: ") + socfamily + "\n"
+
 		AboutText += _("CPU architecture: ") + about.getCPUArch() + "\n"
+
+		AboutText += "\n"
+		if fileExists("/proc/sys/kernel/random/boot_id"):
+			bootid = open("/proc/sys/kernel/random/boot_id", "r").read().strip()
+			AboutText += _("Boot ID: ") + bootid + "\n"
+		if fileExists("/proc/sys/kernel/random/uuid"):
+			uuid = open("/proc/sys/kernel/random/uuid", "r").read().strip()
+			AboutText += _("UUID: ") + uuid + "\n"
 
 		if not boxbranding.getDisplayType().startswith(' '):
 			AboutText += "\n"
@@ -80,18 +111,16 @@ class About(Screen):
 		AboutText += _("Enigma2 (re)starts: %d\n") % config.misc.startCounter.value
 		AboutText += _("Enigma2 debug level: %d\n") % eGetEnigmaDebugLvl()
 
-		AboutText += _("Uptime: ") + about.getSTBUptime() + "\n"
-
 		if fileExists("/etc/openvision/mediaservice"):
 			mediaservice = open("/etc/openvision/mediaservice", "r").read().strip()
-			AboutText += _("Media service: ") + mediaservice.replace("enigma2-plugin-systemplugins-","") + "\n"
+			AboutText += _("Media service: ") + mediaservice.replace("enigma2-plugin-systemplugins-", "") + "\n"
 
 		AboutText += "\n"
 
 		AboutText += _("Drivers version: ") + about.getDriverInstalledDate() + "\n"
-		AboutText += _("Kernel version: ") + about.getKernelVersionString() + "\n"
+		AboutText += _("Kernel version: ") + boxbranding.getKernelVersion() + "\n"
 
-		GStreamerVersion = _("GStreamer version: ") + about.getGStreamerVersionString(cpu).replace("GStreamer","")
+		GStreamerVersion = _("GStreamer version: ") + about.getGStreamerVersionString(cpu).replace("GStreamer", "")
 		self["GStreamerVersion"] = StaticText(GStreamerVersion)
 		AboutText += "\n" + GStreamerVersion + "\n"
 
@@ -104,10 +133,10 @@ class About(Screen):
 		AboutText += "\n"
 
 		fp_version = getFPVersion()
-		if fp_version is None:
+		if fp_version is None or fp_version == "unknown":
 			fp_version = ""
 		else:
-			fp_version = _("Frontprocessor version: %s") % fp_version
+			fp_version = _("Front processor version: %s") % fp_version
 
 			AboutText += fp_version + "\n"
 
@@ -149,6 +178,7 @@ class About(Screen):
 		AboutText += hddinfo + "\n\n" + _("Network Info:")
 		for x in about.GetIPsFromNetworkInterfaces():
 			AboutText += "\n" + x[0] + ": " + x[1]
+		AboutText += '\n\n' + _("Uptime") + ": " + about.getBoxUptime()
 
 		self["AboutScrollLabel"] = ScrollLabel(AboutText)
 		self["key_green"] = Button(_("Translations"))
@@ -184,22 +214,110 @@ class OpenVisionInformation(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.setTitle(_("Open Vision information"))
+		self["lab1"] = StaticText(_("OpenVision"))
+		self["lab2"] = StaticText(_("Lets define enigma2 once more"))
+		self["lab3"] = StaticText(_("Report problems to:"))
+		self["lab4"] = StaticText(_("https://openvision.tech"))
+		self["lab5"] = StaticText(_("Sources are available at:"))
+		self["lab6"] = StaticText(_("https://github.com/OpenVisionE2"))
 
 		OpenVisionInformationText = _("Open Vision information") + "\n"
 
 		OpenVisionInformationText += "\n"
 
-		OpenVisionInformationText += _("Open Vision version: ") + boxbranding.getVisionVersion() + "\n"
-		OpenVisionInformationText += _("Open Vision revision: ") + boxbranding.getVisionRevision() + "\n"
+		if config.misc.OVupdatecheck.value is True:
+			try:
+				if boxbranding.getVisionVersion().startswith("10"):
+					ovurl = "https://raw.githubusercontent.com/OpenVisionE2/openvision-development-platform/develop/meta-openvision/conf/distro/revision.conf"
+				else:
+					ovurl = "https://raw.githubusercontent.com/OpenVisionE2/openvision-oe/develop/meta-openvision/conf/distro/revision.conf"
+				if six.PY2:
+					ovresponse = urllib2.urlopen(ovurl)
+					ovrevision = ovresponse.read()
+					ovrevisionupdate = int(filter(str.isdigit, ovrevision))
+				else:
+					ovresponse = urllib.request.urlopen(ovurl)
+					ovrevision = ovresponse.read().decode()
+					ovrevisionupdate = ovrevision.split('r')[1][:3]
+			except Exception as e:
+				ovrevisionupdate = _("Requires internet connection")
+		else:
+			ovrevisionupdate = _("Disabled in configuration")
+
+		if fileExists("/etc/openvision/visionversion"):
+			visionversion = open("/etc/openvision/visionversion", "r").read().strip()
+			OpenVisionInformationText += _("Open Vision version: ") + visionversion + "\n"
+		else:
+			OpenVisionInformationText += _("Open Vision version: ") + boxbranding.getVisionVersion() + "\n"
+
+		if fileExists("/etc/openvision/visionrevision"):
+			visionrevision = open("/etc/openvision/visionrevision", "r").read().strip()
+			OpenVisionInformationText += _("Open Vision revision: ") + visionrevision + " " + _("(Latest revision on github: ") + str(ovrevisionupdate) + ")" + "\n"
+		else:
+			OpenVisionInformationText += _("Open Vision revision: ") + boxbranding.getVisionRevision() + " " + _("(Latest revision on github: ") + str(ovrevisionupdate) + ")" + "\n"
 
 		if fileExists("/etc/openvision/visionlanguage"):
 			visionlanguage = open("/etc/openvision/visionlanguage", "r").read().strip()
 			OpenVisionInformationText += _("Open Vision language: ") + visionlanguage + "\n"
 
 		OpenVisionInformationText += _("Open Vision module: ") + about.getVisionModule() + "\n"
+
+		if fileExists("/etc/openvision/multiboot"):
+			multibootflag = open("/etc/openvision/multiboot", "r").read().strip()
+			if multibootflag == "1":
+				OpenVisionInformationText += _("Multiboot: ") + _("Yes") + "\n"
+			else:
+				OpenVisionInformationText += _("Multiboot: ") + _("No") + "\n"
+		else:
+			OpenVisionInformationText += _("Multiboot: ") + _("Yes") + "\n"
+
 		OpenVisionInformationText += _("Flash type: ") + about.getFlashType() + "\n"
 
 		OpenVisionInformationText += "\n"
+
+		boxrctype = getBoxRCType()
+		if boxrctype is not None and boxrctype != "unknown":
+			OpenVisionInformationText += _("Factory RC type: ") + boxrctype + "\n"
+		if boxrctype is not None and boxrctype == "unknown":
+			if fileExists("/usr/bin/remotecfg"):
+				OpenVisionInformationText += _("RC type: ") + _("Amlogic remote") + "\n"
+			elif fileExists("/usr/sbin/lircd"):
+				OpenVisionInformationText += _("RC type: ") + _("LIRC remote") + "\n"
+
+		OpenVisionInformationText += _("Open Vision RC type: ") + boxbranding.getRCType() + "\n"
+		OpenVisionInformationText += _("Open Vision RC name: ") + boxbranding.getRCName() + "\n"
+		OpenVisionInformationText += _("Open Vision RC ID number: ") + boxbranding.getRCIDNum() + "\n"
+
+		OpenVisionInformationText += "\n"
+
+		if SystemInfo["HiSilicon"]:
+			OpenVisionInformationText += _("HiSilicon dedicated information") + "\n"
+
+			grab = os.popen("opkg list-installed | grep -- -grab | cut -f4 -d'-'").read().strip()
+			if grab != "" and grab != "r0":
+				OpenVisionInformationText += _("Grab: ") + grab + "\n"
+
+			hihalt = os.popen("opkg list-installed | grep -- -hihalt | cut -f4 -d'-'").read().strip()
+			if hihalt != "":
+				OpenVisionInformationText += _("Halt: ") + hihalt + "\n"
+
+			libs = os.popen("opkg list-installed | grep -- -libs | cut -f4 -d'-'").read().strip()
+			if libs != "":
+				OpenVisionInformationText += _("Libs: ") + libs + "\n"
+
+			partitions = os.popen("opkg list-installed | grep -- -partitions | cut -f4 -d'-'").read().strip()
+			if partitions != "":
+				OpenVisionInformationText += _("Partitions: ") + partitions + "\n"
+
+			reader = os.popen("opkg list-installed | grep -- -reader | cut -f4 -d'-'").read().strip()
+			if reader != "":
+				OpenVisionInformationText += _("Reader: ") + reader + "\n"
+
+			showiframe = os.popen("opkg list-installed | grep -- -showiframe | cut -f4 -d'-'").read().strip()
+			if showiframe != "":
+				OpenVisionInformationText += _("Showiframe: ") + showiframe + "\n"
+
+			OpenVisionInformationText += "\n"
 
 		OpenVisionInformationText += _("Image architecture: ") + boxbranding.getImageArch() + "\n"
 		if boxbranding.getImageFolder() != "":
@@ -269,6 +387,13 @@ class DVBInformation(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.setTitle(_("DVB information"))
+		self.setTitle(_("Open Vision information"))
+		self["lab1"] = StaticText(_("OpenVision"))
+		self["lab2"] = StaticText(_("Lets define enigma2 once more"))
+		self["lab3"] = StaticText(_("Report problems to:"))
+		self["lab4"] = StaticText(_("https://openvision.tech"))
+		self["lab5"] = StaticText(_("Sources are available at:"))
+		self["lab6"] = StaticText(_("https://github.com/OpenVisionE2"))
 
 		DVBInformationText = _("DVB information") + "\n"
 
@@ -280,9 +405,9 @@ class DVBInformation(Screen):
 			import time
 			try:
 				cmd = 'dvb-fe-tool > /tmp/dvbfetool.txt'
-				res = Console().ePopen(cmd)
+				Console().ePopen(cmd)
 				cmdv = "dvb-fe-tool | grep -o 'DVB API Version [0-9].[0-9]*' | sed 's|[^0-9]*||' > /tmp/dvbapiversion.txt"
-				resv = Console().ePopen(cmdv)
+				Console().ePopen(cmdv)
 				time.sleep(0.1)
 			except:
 				pass
@@ -306,37 +431,37 @@ class DVBInformation(Screen):
 		DVBInformationText += "\n"
 
 		if fileExists("/tmp/dvbfetool.txt"):
-			if fileHas("/tmp/dvbfetool.txt","DVBC") or fileHas("/tmp/dvbfetool.txt","DVB-C"):
+			if fileHas("/tmp/dvbfetool.txt", "DVBC") or fileHas("/tmp/dvbfetool.txt", "DVB-C"):
 				DVBInformationText += _("DVB-C: ") + _("Yes") + "\n"
 			else:
 				DVBInformationText += _("DVB-C: ") + _("No") + "\n"
-			if fileHas("/tmp/dvbfetool.txt","DVBS") or fileHas("/tmp/dvbfetool.txt","DVB-S"):
+			if fileHas("/tmp/dvbfetool.txt", "DVBS") or fileHas("/tmp/dvbfetool.txt", "DVB-S"):
 				DVBInformationText += _("DVB-S: ") + _("Yes") + "\n"
 			else:
 				DVBInformationText += _("DVB-S: ") + _("No") + "\n"
-			if fileHas("/tmp/dvbfetool.txt","DVBT") or fileHas("/tmp/dvbfetool.txt","DVB-T"):
+			if fileHas("/tmp/dvbfetool.txt", "DVBT") or fileHas("/tmp/dvbfetool.txt", "DVB-T"):
 				DVBInformationText += _("DVB-T: ") + _("Yes") + "\n"
 			else:
 				DVBInformationText += _("DVB-T: ") + _("No") + "\n"
 
 			DVBInformationText += "\n"
 
-			if fileHas("/tmp/dvbfetool.txt","MULTISTREAM"):
+			if fileHas("/tmp/dvbfetool.txt", "MULTISTREAM"):
 				DVBInformationText += _("Multistream: ") + _("Yes") + "\n"
 			else:
 				DVBInformationText += _("Multistream: ") + _("No") + "\n"
 
 			DVBInformationText += "\n"
 
-			if fileHas("/tmp/dvbfetool.txt","ANNEX_A") or fileHas("/tmp/dvbfetool.txt","ANNEX-A"):
+			if fileHas("/tmp/dvbfetool.txt", "ANNEX_A") or fileHas("/tmp/dvbfetool.txt", "ANNEX-A"):
 				DVBInformationText += _("ANNEX-A: ") + _("Yes") + "\n"
 			else:
 				DVBInformationText += _("ANNEX-A: ") + _("No") + "\n"
-			if fileHas("/tmp/dvbfetool.txt","ANNEX_B") or fileHas("/tmp/dvbfetool.txt","ANNEX-B"):
+			if fileHas("/tmp/dvbfetool.txt", "ANNEX_B") or fileHas("/tmp/dvbfetool.txt", "ANNEX-B"):
 				DVBInformationText += _("ANNEX-B: ") + _("Yes") + "\n"
 			else:
 				DVBInformationText += _("ANNEX-B: ") + _("No") + "\n"
-			if fileHas("/tmp/dvbfetool.txt","ANNEX_C") or fileHas("/tmp/dvbfetool.txt","ANNEX-C"):
+			if fileHas("/tmp/dvbfetool.txt", "ANNEX_C") or fileHas("/tmp/dvbfetool.txt", "ANNEX-C"):
 				DVBInformationText += _("ANNEX-C: ") + _("Yes") + "\n"
 			else:
 				DVBInformationText += _("ANNEX-C: ") + _("No") + "\n"
@@ -356,6 +481,13 @@ class Geolocation(Screen):
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.setTitle(_("Geolocation"))
+		self.setTitle(_("Open Vision information"))
+		self["lab1"] = StaticText(_("OpenVision"))
+		self["lab2"] = StaticText(_("Lets define enigma2 once more"))
+		self["lab3"] = StaticText(_("Report problems to:"))
+		self["lab4"] = StaticText(_("https://openvision.tech"))
+		self["lab5"] = StaticText(_("Sources are available at:"))
+		self["lab6"] = StaticText(_("https://github.com/OpenVisionE2"))
 
 		GeolocationText = _("Geolocation information") + "\n"
 
@@ -363,40 +495,40 @@ class Geolocation(Screen):
 
 		try:
 			continent = geolocation.get("continent", None)
-			if isinstance(continent, unicode):
-				continent = continent.encode(encoding="UTF-8", errors="ignore")
+			if isinstance(continent, six.text_type):
+				continent = six.ensure_str(continent.encode(encoding="UTF-8", errors="ignore"))
 			if continent is not None:
 				GeolocationText +=  _("Continent: ") + continent + "\n"
 
 			country = geolocation.get("country", None)
-			if isinstance(country, unicode):
-				country = country.encode(encoding="UTF-8", errors="ignore")
+			if isinstance(country, six.text_type):
+				country = six.ensure_str(country.encode(encoding="UTF-8", errors="ignore"))
 			if country is not None:
 				GeolocationText +=  _("Country: ") + country + "\n"
 
 			state = geolocation.get("regionName", None)
-			if isinstance(state, unicode):
-				state = state.encode(encoding="UTF-8", errors="ignore")
+			if isinstance(state, six.text_type):
+				state = six.ensure_str(state.encode(encoding="UTF-8", errors="ignore"))
 			if state is not None:
 				GeolocationText +=  _("State: ") + state + "\n"
 
 			city = geolocation.get("city", None)
-			if isinstance(city, unicode):
-				city = city.encode(encoding="UTF-8", errors="ignore")
+			if isinstance(city, six.text_type):
+				city = six.ensure_str(city.encode(encoding="UTF-8", errors="ignore"))
 			if city is not None:
 				GeolocationText +=  _("City: ") + city + "\n"
 
 			GeolocationText += "\n"
 
 			timezone = geolocation.get("timezone", None)
-			if isinstance(timezone, unicode):
-				timezone = timezone.encode(encoding="UTF-8", errors="ignore")
+			if isinstance(timezone, six.text_type):
+				timezone = six.ensure_str(timezone.encode(encoding="UTF-8", errors="ignore"))
 			if timezone is not None:
 				GeolocationText +=  _("Timezone: ") + timezone + "\n"
 
 			currency = geolocation.get("currency", None)
-			if isinstance(currency, unicode):
-				currency = currency.encode(encoding="UTF-8", errors="ignore")
+			if isinstance(currency, six.text_type):
+				currency = six.ensure_str(currency.encode(encoding="UTF-8", errors="ignore"))
 			if currency is not None:
 				GeolocationText +=  _("Currency: ") + currency + "\n"
 
@@ -411,8 +543,36 @@ class Geolocation(Screen):
 				GeolocationText +=  _("Longitude: ") + str(float(longitude)) + "\n"
 			self["AboutScrollLabel"] = ScrollLabel(GeolocationText)
 		except Exception as e:
-			self["AboutScrollLabel"] = ScrollLabel(_("Requires internet connection."))
+			self["AboutScrollLabel"] = ScrollLabel(_("Requires internet connection"))
 
+		self["key_red"] = Button(_("Close"))
+
+		self["actions"] = ActionMap(["ColorActions", "SetupActions", "DirectionActions"],
+			{
+				"cancel": self.close,
+				"ok": self.close,
+				"up": self["AboutScrollLabel"].pageUp,
+				"down": self["AboutScrollLabel"].pageDown
+			})
+
+class BenchmarkInformation(Screen):
+	def __init__(self, session):
+		Screen.__init__(self, session)
+		self.setTitle(_("Benchmark information"))
+		self["lab1"] = StaticText(_("OpenVision"))
+		self["lab2"] = StaticText(_("Lets define enigma2 once more"))
+		self["lab3"] = StaticText(_("Report problems to:"))
+		self["lab4"] = StaticText(_("https://openvision.tech"))
+		self["lab5"] = StaticText(_("Sources are available at:"))
+		self["lab6"] = StaticText(_("https://github.com/OpenVisionE2"))
+
+		BenchmarkInformationText = _("Benchmark information") + "\n"
+
+		BenchmarkInformationText += "\n"
+
+		BenchmarkInformationText += _("CPU benchmark: ") + about.getCPUBenchmark() + "\n"
+
+		self["AboutScrollLabel"] = ScrollLabel(BenchmarkInformationText)
 		self["key_red"] = Button(_("Close"))
 
 		self["actions"] = ActionMap(["ColorActions", "SetupActions", "DirectionActions"],
@@ -433,6 +593,12 @@ class Devices(Screen):
 		self["HDDHeader"] = StaticText(_("Detected devices:"))
 		self["MountsHeader"] = StaticText(_("Network servers:"))
 		self["nims"] = StaticText()
+		self["lab1"] = StaticText(_("OpenVision"))
+		self["lab2"] = StaticText(_("Lets define enigma2 once more"))
+		self["lab3"] = StaticText(_("Report problems to:"))
+		self["lab4"] = StaticText(_("https://openvision.tech"))
+		self["lab5"] = StaticText(_("Sources are available at:"))
+		self["lab6"] = StaticText(_("https://github.com/OpenVisionE2"))
 		for count in (0, 1, 2, 3):
 			self["Tuner" + str(count)] = StaticText("")
 		self["hdd"] = StaticText()
@@ -532,7 +698,10 @@ class Devices(Screen):
 		self.Console.ePopen("df -mh | grep -v '^Filesystem'", self.Stage1Complete)
 
 	def Stage1Complete(self, result, retval, extra_args=None):
-		result = result.replace('\n                        ', ' ').split('\n')
+		if six.PY2:
+			result = result.replace('\n                        ', ' ').split('\n')
+		else:
+			result = result.decode().replace('\n                        ', ' ').split('\n')
 		self.mountinfo = ""
 		for line in result:
 			self.parts = line.split()
@@ -574,6 +743,12 @@ class SystemNetworkInfo(Screen):
 		self["signal"] = StaticText()
 		self["bitrate"] = StaticText()
 		self["enc"] = StaticText()
+		self["lab1"] = StaticText(_("OpenVision"))
+		self["lab2"] = StaticText(_("Lets define enigma2 once more"))
+		self["lab3"] = StaticText(_("Report problems to:"))
+		self["lab4"] = StaticText(_("https://openvision.tech"))
+		self["lab5"] = StaticText(_("Sources are available at:"))
+		self["lab6"] = StaticText(_("https://github.com/OpenVisionE2"))
 
 		self["IFtext"] = StaticText()
 		self["IF"] = StaticText()
@@ -614,47 +789,47 @@ class SystemNetworkInfo(Screen):
 		self.AboutText = ""
 		self.iface = "eth0"
 		eth0 = about.getIfConfig('eth0')
-		if eth0.has_key('addr'):
+		if 'addr' in eth0:
 			self.AboutText += _("IP:") + "\t" + eth0['addr'] + "\n"
-			if eth0.has_key('netmask'):
+			if 'netmask' in eth0:
 				self.AboutText += _("Netmask:") + "\t" + eth0['netmask'] + "\n"
-			if eth0.has_key('hwaddr'):
+			if 'hwaddr' in eth0:
 				self.AboutText += _("MAC:") + "\t" + eth0['hwaddr'] + "\n"
 			self.iface = 'eth0'
 
 		eth1 = about.getIfConfig('eth1')
-		if eth1.has_key('addr'):
+		if 'addr' in eth1:
 			self.AboutText += _("IP:") + "\t" + eth1['addr'] + "\n"
-			if eth1.has_key('netmask'):
+			if 'netmask' in eth1:
 				self.AboutText += _("Netmask:") + "\t" + eth1['netmask'] + "\n"
-			if eth1.has_key('hwaddr'):
+			if 'hwaddr' in eth1:
 				self.AboutText += _("MAC:") + "\t" + eth1['hwaddr'] + "\n"
 			self.iface = 'eth1'
 
 		ra0 = about.getIfConfig('ra0')
-		if ra0.has_key('addr'):
+		if 'addr' in ra0:
 			self.AboutText += _("IP:") + "\t" + ra0['addr'] + "\n"
-			if ra0.has_key('netmask'):
+			if 'netmask' in ra0:
 				self.AboutText += _("Netmask:") + "\t" + ra0['netmask'] + "\n"
-			if ra0.has_key('hwaddr'):
+			if 'hwaddr' in ra0:
 				self.AboutText += _("MAC:") + "\t" + ra0['hwaddr'] + "\n"
 			self.iface = 'ra0'
 
 		wlan0 = about.getIfConfig('wlan0')
-		if wlan0.has_key('addr'):
+		if 'addr' in wlan0:
 			self.AboutText += _("IP:") + "\t" + wlan0['addr'] + "\n"
-			if wlan0.has_key('netmask'):
+			if 'netmask' in wlan0:
 				self.AboutText += _("Netmask:") + "\t" + wlan0['netmask'] + "\n"
-			if wlan0.has_key('hwaddr'):
+			if 'hwaddr' in wlan0:
 				self.AboutText += _("MAC:") + "\t" + wlan0['hwaddr'] + "\n"
 			self.iface = 'wlan0'
 
 		wlan3 = about.getIfConfig('wlan3')
-		if wlan3.has_key('addr'):
+		if 'addr' in wlan3:
 			self.AboutText += _("IP:") + "\t" + wlan3['addr'] + "\n"
-			if wlan3.has_key('netmask'):
+			if 'netmask' in wlan3:
 				self.AboutText += _("Netmask:") + "\t" + wlan3['netmask'] + "\n"
-			if wlan3.has_key('hwaddr'):
+			if 'hwaddr' in wlan3:
 				self.AboutText += _("MAC:") + "\t" + wlan3['hwaddr'] + "\n"
 			self.iface = 'wlan3'
 
@@ -665,10 +840,10 @@ class SystemNetworkInfo(Screen):
 
 		isp = geolocation.get("isp", None)
 		isporg = geolocation.get("org", None)
-		if isinstance(isp, unicode):
-			isp = isp.encode(encoding="UTF-8", errors="ignore")
-		if isinstance(isporg, unicode):
-			isporg = isporg.encode(encoding="UTF-8", errors="ignore")
+		if isinstance(isp, six.text_type):
+			isp = six.ensure_str(isp.encode(encoding="UTF-8", errors="ignore"))
+		if isinstance(isporg, six.text_type):
+			isporg = six.ensure_str(isporg.encode(encoding="UTF-8", errors="ignore"))
 		self.AboutText += "\n"
 		if isp is not None:
 			if isporg is not None:
@@ -698,13 +873,16 @@ class SystemNetworkInfo(Screen):
 		self.console.ePopen('ethtool %s' % self.iface, self.SpeedFinished)
 
 	def SpeedFinished(self, result, retval, extra_args):
-		result_tmp = result.split('\n')
+		if six.PY2:
+			result_tmp = result.split('\n')
+		else:
+			result_tmp = result.decode().split('\n')
 		for line in result_tmp:
 			if 'Speed:' in line:
 				speed = line.split(': ')[1][:-4]
 				self.AboutText += _("Speed:") + "\t" + speed + _('Mb/s')
 
-		hostname = file('/proc/sys/kernel/hostname').read()
+		hostname = open('/proc/sys/kernel/hostname').read()
 		self.AboutText += "\n"
 		self.AboutText += _("Hostname:") + "\t" + hostname + "\n"
 		self["AboutScrollLabel"].setText(self.AboutText)
@@ -737,10 +915,10 @@ class SystemNetworkInfo(Screen):
 							essid = _("No connection")
 						else:
 							accesspoint = status[self.iface]["accesspoint"]
-					if self.has_key("BSSID"):
+					if 'BSSID' in self:
 						self.AboutText += _('Accesspoint:') + '\t' + accesspoint + '\n'
 
-					if self.has_key("ESSID"):
+					if 'ESSID' in self:
 						if not status[self.iface]["essid"]:
 							essid = _("Unknown")
 						else:
@@ -750,14 +928,14 @@ class SystemNetworkInfo(Screen):
 								essid = status[self.iface]["essid"]
 						self.AboutText += _('SSID:') + '\t' + essid + '\n'
 
-					if self.has_key("quality"):
+					if 'quality' in self:
 						if not status[self.iface]["quality"]:
 							quality = _("Unknown")
 						else:
 							quality = status[self.iface]["quality"]
 						self.AboutText += _('Link quality:') + '\t' + quality + '\n'
 
-					if self.has_key("bitrate"):
+					if 'bitrate' in self:
 						if not status[self.iface]["bitrate"]:
 							bitrate = _("Unknown")
 						else:
@@ -767,14 +945,14 @@ class SystemNetworkInfo(Screen):
 								bitrate = str(status[self.iface]["bitrate"]) + " Mb/s"
 						self.AboutText += _('Bitrate:') + '\t' + bitrate + '\n'
 
-					if self.has_key("signal"):
+					if 'signal' in self:
 						if not status[self.iface]["signal"]:
 							signal = _("Unknown")
 						else:
 							signal = status[self.iface]["signal"]
 						self.AboutText += _('Signal strength:') + '\t' + signal + '\n'
 
-					if self.has_key("enc"):
+					if 'enc' in self:
 						if not status[self.iface]["encryption"]:
 							encryption = _("Unknown")
 						else:
@@ -818,6 +996,8 @@ class SystemNetworkInfo(Screen):
 		self["devicepic"].show()
 
 	def dataAvail(self, data):
+		if six.PY3:
+			data = data.decode()
 		self.LinkState = None
 		for line in data.splitlines():
 			line = line.strip()
@@ -855,9 +1035,12 @@ class SystemMemoryInfo(Screen):
 		title = screentitle
 		Screen.setTitle(self, title)
 		self.skinName = ["SystemMemoryInfo", "About"]
-		self["lab1"] = StaticText(_("Open Vision enigma2 image"))
-		self["lab2"] = StaticText(_("by Open Vision developers"))
-		self["lab3"] = StaticText(_("Support at %s") % "https://openvision.tech")
+		self["lab1"] = StaticText(_("OpenVision"))
+		self["lab2"] = StaticText(_("Lets define enigma2 once more"))
+		self["lab3"] = StaticText(_("Report problems to:"))
+		self["lab4"] = StaticText(_("https://openvision.tech"))
+		self["lab5"] = StaticText(_("Sources are available at:"))
+		self["lab6"] = StaticText(_("https://github.com/OpenVisionE2"))
 		self["AboutScrollLabel"] = ScrollLabel()
 
 		self["key_red"] = Button(_("Close"))
@@ -868,7 +1051,7 @@ class SystemMemoryInfo(Screen):
 										"red": self.close,
 									})
 
-		out_lines = file("/proc/meminfo").readlines()
+		out_lines = open("/proc/meminfo").readlines()
 		self.AboutText = _("RAM") + '\n\n'
 		RamTotal = "-"
 		RamFree = "-"
@@ -934,6 +1117,12 @@ class TranslationInfo(Screen):
 
 		self["key_red"] = Button(_("Cancel"))
 		self["TranslationInfo"] = StaticText(info)
+		self["lab1"] = StaticText(_("OpenVision"))
+		self["lab2"] = StaticText(_("Lets define enigma2 once more"))
+		self["lab3"] = StaticText(_("Report problems to:"))
+		self["lab4"] = StaticText(_("https://openvision.tech"))
+		self["lab5"] = StaticText(_("Sources are available at:"))
+		self["lab6"] = StaticText(_("https://github.com/OpenVisionE2"))
 
 		translator_name = infomap.get("Language-Team", "none")
 		if translator_name == "none":
@@ -952,6 +1141,12 @@ class CommitInfo(Screen):
 		Screen.__init__(self, session)
 		self.setTitle(_("Latest Commits"))
 		self.skinName = ["CommitInfo", "About"]
+		self["lab1"] = StaticText(_("OpenVision"))
+		self["lab2"] = StaticText(_("Lets define enigma2 once more"))
+		self["lab3"] = StaticText(_("Report problems to:"))
+		self["lab4"] = StaticText(_("https://openvision.tech"))
+		self["lab5"] = StaticText(_("Sources are available at:"))
+		self["lab6"] = StaticText(_("https://github.com/OpenVisionE2"))
 		self["AboutScrollLabel"] = ScrollLabel(_("Please wait"))
 
 		self["actions"] = ActionMap(["SetupActions", "DirectionActions"],
@@ -972,17 +1167,21 @@ class CommitInfo(Screen):
 		except:
 			branch = ""
 
+		if boxbranding.getVisionVersion().startswith("10"):
+			oegiturl = "https://api.github.com/repos/OpenVisionE2/openvision-development-platform/commits"
+		else:
+			oegiturl = "https://api.github.com/repos/OpenVisionE2/openvision-oe/commits"
+
 		self.project = 0
 		self.projects = [
 			("https://api.github.com/repos/OpenVisionE2/enigma2-openvision/commits" + branch, "Enigma2 - Vision"),
-			("https://api.github.com/repos/OpenVisionE2/openvision-oe/commits", "OE - Vision 7.x"),
-			("https://api.github.com/repos/OpenVisionE2/openvision-development-platform/commits", "OE - Vision 9.x"),
-			("https://api.github.com/repos/openpli/servicemp3/commits", "Service MP3"),
-			("https://api.github.com/repos/OpenVisionE2/gstreamer1.0-plugin-multibox-dvbmediasink/commits", "DVB MediaSink"),
-			("https://api.github.com/repos/OpenVisionE2/enigma2-plugins/commits", "Enigma2 Plugins"),
-			("https://api.github.com/repos/OpenVisionE2/alliance-plugins/commits", "Alliance Plugins"),
+			(oegiturl, "OE - Vision"),
+			("https://api.github.com/repos/OpenVisionE2/enigma2-plugins/commits", "Enigma2 plugins"),
+			("https://api.github.com/repos/OpenVisionE2/alliance-plugins/commits", "Alliance plugins"),
 			("https://api.github.com/repos/OpenVisionE2/OpenWebif/commits", "Open WebIF"),
-			("https://api.github.com/repos/OpenVisionE2/BackupSuite/commits", "Backup Suite")
+			("https://api.github.com/repos/OpenVisionE2/openvision-core-plugin/commits", "Vision core plugin"),
+			("https://api.github.com/repos/OpenVisionE2/BackupSuite/commits", "Backup Suite plugin"),
+			("https://api.github.com/repos/OpenVisionE2/OctEtFHD-skin/commits", "OctEtFHD skin")
 		]
 		self.cachedProjects = {}
 		self.Timer = eTimer()
@@ -994,7 +1193,6 @@ class CommitInfo(Screen):
 		commitlog = ""
 		from datetime import datetime
 		from json import loads
-		from urllib2 import urlopen
 		try:
 			commitlog += 80 * '-' + '\n'
 			commitlog += url.split('/')[-2] + '\n'
@@ -1002,9 +1200,15 @@ class CommitInfo(Screen):
 			try:
 				# For python 2.7.11 we need to bypass the certificate check
 				from ssl import _create_unverified_context
-				log = loads(urlopen(url, timeout=5, context=_create_unverified_context()).read())
+				if six.PY2:
+					log = loads(urllib2.urlopen(url, timeout=5, context=_create_unverified_context()).read())
+				else:
+					log = loads(urllib.request.urlopen(url, timeout=5, context=_create_unverified_context()).read())
 			except:
-				log = loads(urlopen(url, timeout=5).read())
+				if six.PY2:
+					log = loads(urllib2.urlopen(url, timeout=5).read())
+				else:
+					log = loads(urllib.request.urlopen(url, timeout=5).read())
 			for c in log:
 				creator = c['commit']['author']['name']
 				title = c['commit']['message']
@@ -1057,6 +1261,13 @@ class MemoryInfo(Screen):
 		self["slide"] = ProgressBar()
 		self["slide"].setValue(100)
 
+		self["lab1"] = StaticText(_("OpenVision"))
+		self["lab2"] = StaticText(_("Lets define enigma2 once more"))
+		self["lab3"] = StaticText(_("Report problems to:"))
+		self["lab4"] = StaticText(_("https://openvision.tech"))
+		self["lab5"] = StaticText(_("Sources are available at:"))
+		self["lab6"] = StaticText(_("https://github.com/OpenVisionE2"))
+
 		self["params"] = MemoryInfoSkinParams()
 
 		self['info'] = Label(_("This info is for developers only.\nFor normal users it is not relevant.\nPlease don't panic if you see values displayed looking suspicious!"))
@@ -1071,7 +1282,7 @@ class MemoryInfo(Screen):
 			mem = 1
 			free = 0
 			rows_in_column = self["params"].rows_in_column
-			for i, line in enumerate(open('/proc/meminfo','r')):
+			for i, line in enumerate(open('/proc/meminfo', 'r')):
 				s = line.strip().split(None, 2)
 				if len(s) == 3:
 					name, size, units = s
@@ -1085,18 +1296,18 @@ class MemoryInfo(Screen):
 				if name.startswith("MemFree") or name.startswith("Buffers") or name.startswith("Cached"):
 					free += int(size)
 				if i < rows_in_column:
-					ltext += "".join((name,"\n"))
-					lvalue += "".join((size," ",units,"\n"))
+					ltext += "".join((name, "\n"))
+					lvalue += "".join((size, " ", units, "\n"))
 				else:
-					rtext += "".join((name,"\n"))
-					rvalue += "".join((size," ",units,"\n"))
+					rtext += "".join((name, "\n"))
+					rvalue += "".join((size, " ", units, "\n"))
 			self['lmemtext'].setText(ltext)
 			self['lmemvalue'].setText(lvalue)
 			self['rmemtext'].setText(rtext)
 			self['rmemvalue'].setText(rvalue)
 			self["slide"].setValue(int(100.0*(mem-free)/mem+0.25))
-			self['pfree'].setText("%.1f %s" % (100.*free/mem,'%'))
-			self['pused'].setText("%.1f %s" % (100.*(mem-free)/mem,'%'))
+			self['pfree'].setText("%.1f %s" % (100.*free/mem, '%'))
+			self['pused'].setText("%.1f %s" % (100.*(mem-free)/mem, '%'))
 		except Exception as e:
 			print("[About] getMemoryInfo FAIL:", e)
 
@@ -1117,7 +1328,8 @@ class MemoryInfoSkinParams(GUIComponent):
 				if attrib == "rowsincolumn":
 					self.rows_in_column = int(value)
 			self.skinAttributes = attribs
-		return GUIComponent.applySkin(self, desktop, screen)
+			applySkin = GUIComponent
+		return applySkin()
 
 	GUI_WIDGET = eLabel
 
@@ -1128,6 +1340,12 @@ class Troubleshoot(Screen):
 		self["AboutScrollLabel"] = ScrollLabel(_("Please wait"))
 		self["key_red"] = Button()
 		self["key_green"] = Button()
+		self["lab1"] = StaticText(_("OpenVision"))
+		self["lab2"] = StaticText(_("Lets define enigma2 once more"))
+		self["lab3"] = StaticText(_("Report problems to:"))
+		self["lab4"] = StaticText(_("https://openvision.tech"))
+		self["lab5"] = StaticText(_("Sources are available at:"))
+		self["lab6"] = StaticText(_("https://github.com/OpenVisionE2"))
 
 		self["actions"] = ActionMap(["OkCancelActions", "DirectionActions", "ColorActions"],
 			{
@@ -1161,7 +1379,7 @@ class Troubleshoot(Screen):
 
 	def red(self):
 		if self.commandIndex >= self.numberOfCommands:
-			self.session.openWithCallback(self.removeAllLogfiles, MessageBox, _("Do you want to remove all the crahs logfiles"), default=False)
+			self.session.openWithCallback(self.removeAllLogfiles, MessageBox, _("Do you want to remove all the crash logfiles"), default=False)
 		else:
 			self.close()
 

@@ -16,6 +16,9 @@ from Tools.BoundFunction import boundFunction
 from Tools.FuzzyDate import FuzzyTime
 from time import time
 from timer import TimerEntry as RealTimerEntry
+import six
+if six.PY3:
+	import functools
 
 class PowerTimerEditList(Screen):
 	EMPTY = 0
@@ -196,6 +199,7 @@ class PowerTimerEditList(Screen):
 			cb(time, duration, state)
 
 	def fillTimerList(self):
+		#helper function to move finished timers to end of list
 		def eol_compare(x, y):
 			if x[0].state != y[0].state and x[0].state == RealTimerEntry.StateEnded or y[0].state == RealTimerEntry.StateEnded:
 				return cmp(x[0].state, y[0].state)
@@ -205,8 +209,11 @@ class PowerTimerEditList(Screen):
 		del list[:]
 		list.extend([(timer, False) for timer in self.session.nav.PowerTimer.timer_list])
 		list.extend([(timer, True) for timer in self.session.nav.PowerTimer.processed_timers])
-		if config.usage.timerlist_finished_timer_position.index:
-			list.sort(cmp = eol_compare)
+		if config.usage.timerlist_finished_timer_position.index: #end of list
+			if six.PY2:
+				list.sort(cmp = eol_compare)
+			else:
+				list.sort(key=functools.cmp_to_key(eol_compare))
 		else:
 			list.sort(key = lambda x: x[0].begin)
 

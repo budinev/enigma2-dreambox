@@ -1,13 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from __future__ import print_function
-from enigma import eServiceCenter, eServiceReference, pNavigation, getBestPlayableServiceReference, iPlayableService, setPreferredTuner, eStreamServer, iRecordableServicePtr
+from enigma import eServiceCenter, eServiceReference, pNavigation, getBestPlayableServiceReference, iPlayableService, setPreferredTuner, eStreamServer, iRecordableServicePtr, eDVBLocalTimeHandler, eTimer
 from Components.ImportChannels import ImportChannels
 from Components.ParentalControl import parentalControl
 from Components.SystemInfo import SystemInfo
 from Components.config import config, configfile
 from Tools.BoundFunction import boundFunction
 from Tools.StbHardware import getFPWasTimerWakeup
+from Tools.Alternatives import ResolveCiAlternative
 from Tools import Notifications
 from time import time
 import PowerTimer
@@ -21,7 +22,7 @@ from os import path
 
 # TODO: remove pNavgation, eNavigation and rewrite this stuff in python.
 class Navigation:
-	def __init__(self):
+	def __init__(self, nextRecordTimerAfterEventActionAuto=False, nextPowerManagerAfterEventActionAuto=False):
 		if NavigationInstance.instance is not None:
 			raise NavigationInstance.instance
 
@@ -41,14 +42,23 @@ class Navigation:
 		self.currentlyPlayingService = None
 		self.RecordTimer = RecordTimer.RecordTimer()
 		self.PowerTimer = PowerTimer.PowerTimer()		
-		self.__wasTimerWakeup = getFPWasTimerWakeup(True)
+		self.__wasTimerWakeup = False
+		self.__nextRecordTimerAfterEventActionAuto = nextRecordTimerAfterEventActionAuto
+		self.__nextPowerManagerAfterEventActionAuto = nextPowerManagerAfterEventActionAuto
+		if getFPWasTimerWakeup():
+			self.__wasTimerWakeup = True
+			self._processTimerWakeup()
+
 		self.__isRestartUI = config.misc.RestartUI.value
 		startup_to_standby = config.usage.startup_to_standby.value
 		wakeup_time_type = config.misc.prev_wakeup_time_type.value
+		wakeup_timer_enabled = False
 		if config.usage.remote_fallback_import_restart.value:
 			ImportChannels()
 		if self.__wasTimerWakeup:
-			RecordTimer.RecordTimerEntry.setWasInDeepStandby()
+			wakeup_timer_enabled = wakeup_time_type == 3 and config.misc.prev_wakeup_time.value
+			if not wakeup_timer_enabled:
+				RecordTimer.RecordTimerEntry.setWasInDeepStandby()
 		if config.misc.RestartUI.value:
 			config.misc.RestartUI.value = False
 			config.misc.RestartUI.save()
@@ -56,9 +66,9 @@ class Navigation:
 		else:
 			if config.usage.remote_fallback_import.value and not config.usage.remote_fallback_import_restart.value:
 				ImportChannels()
-			if startup_to_standby == "yes" or self.__wasTimerWakeup and config.misc.prev_wakeup_time.value and ((wakeup_time_type == 0 or wakeup_time_type == 1) or ( wakeup_time_type == 3 and startup_to_standby == "except")):
+			if startup_to_standby == "yes" or self.__wasTimerWakeup and config.misc.prev_wakeup_time.value and (wakeup_time_type == 0 or wakeup_time_type == 1 or (wakeup_time_type == 3 and startup_to_standby == "except")):
 				if not Screens.Standby.inTryQuitMainloop:
-					Notifications.AddNotification(Screens.Standby.Standby)
+					Notifications.AddNotification(Screens.Standby.Standby, wakeup_timer_enabled and 1 or True)
 		if config.misc.prev_wakeup_time.value:
 			config.misc.prev_wakeup_time.value = 0
 			config.misc.prev_wakeup_time.save()
@@ -93,6 +103,10 @@ class Navigation:
 
 	def wasTimerWakeup(self):
 		return self.__wasTimerWakeup
+
+	def gotostandby(self):
+		print('[Navigation] TIMER: now entering standby')
+		Notifications.AddNotification(Screens.Standby.Standby)
 
 	def isRestartUI(self):
 		return self.__isRestartUI
@@ -135,17 +149,11 @@ class Navigation:
 		if not checkParentalControl or parentalControl.isServicePlayable(ref, boundFunction(self.playService, checkParentalControl=False, forceRestart=forceRestart, adjust=adjust)):
 			if ref.flags & eServiceReference.isGroup:
 				oldref = self.currentlyPlayingServiceReference or eServiceReference()
-				if config.misc.use_ci_assignment.value:
-					def ResolveCiAlternative(ref):
-						serviceList = self.ServiceHandler and self.ServiceHandler.list(ref)
-						if serviceList:
-							for service in serviceList.getContent("R"):
-								if isPlayableForCur(service):
-									return service
-						return None
-					playref = ResolveCiAlternative(ref)
-				else:
-					playref = getBestPlayableServiceReference(ref, oldref)
+				playref = getBestPlayableServiceReference(ref, oldref)
+				if playref and config.misc.use_ci_assignment.value and not isPlayableForCur(playref):
+					alternative_ci_ref = ResolveCiAlternative(ref, playref)
+					if alternative_ci_ref:
+						playref = alternative_ci_ref
 				print("[Navigation] alternative ref: ", playref and playref.toString())
 				if playref and oldref and playref == oldref and not forceRestart:
 					print("[Navigation] ignore request to play already running service(2)")
@@ -220,7 +228,8 @@ class Navigation:
 
 	def recordService(self, ref, simulate=False):
 		service = None
-		if not simulate: print("[Navigation] recording service: %s" % (str(ref)))
+		if not simulate:
+			print("[Navigation] recording service:", (ref and ref.toString()))
 		if isinstance(ref, ServiceReference):
 			ref = ref.ref
 		if ref:
@@ -263,6 +272,7 @@ class Navigation:
 
 	def shutdown(self):
 		self.RecordTimer.shutdown()
+		self.PowerTimer.shutdown()
 		self.ServiceHandler = None
 		self.pnav = None
 

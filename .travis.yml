@@ -1,14 +1,15 @@
 language: cpp
 
 sudo: required
-dist: bionic
+dist: focal
 
 addons:
   apt:
     sources:
-    - ubuntu-toolchain-r-test
+    - sourceline: 'ppa:ubuntu-toolchain-r/test'
     packages:
-    - g++-9
+    - g++-10
+    - gcc-10
     - linux-libc-dev
     - git
     - build-essential
@@ -29,7 +30,7 @@ addons:
     - libgif-dev
     - libopenmpi-dev
     env:
-    - MATRIX_EVAL="CC=gcc-9 && CXX=g++-9"
+    - MATRIX_EVAL="CC=gcc-10 && CXX=g++-10 && PYTHON=2.7"
 
 python:
   - "2.7"
@@ -38,9 +39,15 @@ git:
   depth: 1
 
 before_install:
+    - pip install --upgrade pip tox six
+    - pip3 install --upgrade pip tox six
     - eval "${MATRIX_EVAL}"
 
 script:
+- sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10 --slave /usr/bin/gcov gcov /usr/bin/gcov-10
+- gcc --version
+- g++ --version
+- python --version
 - echo installing libdvbsi++
 - pushd .
 - cd /tmp
@@ -68,7 +75,7 @@ script:
 - popd
 - echo compiling enigma2
 - autoreconf -i
-- ./configure --with-libsdl=no --with-boxtype=h9 --with-boxbrand=airdigital --with-oever=9.3 --enable-dependency-tracking ac_cv_prog_c_openmp=-fopenmp --with-nolcd
+- ./configure --with-libsdl=no --with-boxtype=h9 --with-boxbrand=airdigital --with-oever=10.2 --enable-dependency-tracking ac_cv_prog_c_openmp=-fopenmp --with-nolcd
 - make
 - python -m compileall .
 - find . -type f -name "*.po" -exec msgfmt {} -o {}.mo \;

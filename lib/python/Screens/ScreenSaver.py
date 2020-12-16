@@ -9,6 +9,7 @@ import Screens.Standby
 from enigma import ePoint, eTimer, iPlayableService, eActionMap
 import os, random
 from sys import maxint
+from os import sys
 
 class InfoBarScreenSaver:
 	def __init__(self):
@@ -105,7 +106,7 @@ class Screensaver(Screen):
 					self.hide()
 
 	def doMovePicture(self):
-		self.posx = random.randint(1,self.maxx)
-		self.posy = random.randint(1,self.maxy)
+		self.posx = random.randint(1, self.maxx)
+		self.posy = random.randint(1, self.maxy)
 		self["picture"].instance.move(ePoint(self.posx, self.posy))
 		self.moveLogoTimer.startLongTimer(5)

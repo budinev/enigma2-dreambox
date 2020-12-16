@@ -154,10 +154,10 @@ void bsodFatal(const char *component)
 		component = "Enigma2";
 
 	/* Retrieve current ringbuffer state */
-	const char* logp1;
-	unsigned int logs1;
-	const char* logp2;
-	unsigned int logs2;
+	const char* logp1 = NULL;
+	unsigned int logs1 = 0;
+	const char* logp2 = NULL;
+	unsigned int logs2 = 0;
 	retrieveLogBuffer(&logp1, &logs1, &logp2, &logs2);
 
 	FILE *f;
@@ -221,6 +221,7 @@ void bsodFatal(const char *component)
 
 		stringFromFile(f, "stbmodel", "/etc/openvision/model");
 		stringFromFile(f, "stbbrand", "/etc/openvision/brand");
+		stringFromFile(f, "stbplatform", "/etc/openvision/platform");
 		stringFromFile(f, "kernelcmdline", "/proc/cmdline");
 		stringFromFile(f, "nimsockets", "/proc/bus/nim_sockets");
 		stringFromFile(f, "distro", "/etc/openvision/distro");
@@ -229,6 +230,7 @@ void bsodFatal(const char *component)
 		stringFromFile(f, "mediaservice", "/etc/openvision/mediaservice");
 		stringFromFile(f, "multilib", "/etc/openvision/multilib");
 		stringFromFile(f, "architecture", "/etc/openvision/architecture");
+		stringFromFile(f, "socfamily", "/etc/openvision/socfamily");
 		stringFromFile(f, "visionversion", "/etc/openvision/visionversion");
 		stringFromFile(f, "visionrevision", "/etc/openvision/visionrevision");
 		stringFromFile(f, "visionlanguage", "/etc/openvision/visionlanguage");

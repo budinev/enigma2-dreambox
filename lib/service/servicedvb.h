@@ -90,7 +90,7 @@ class eDVBServicePlay: public eDVBServiceBase,
 		public iPlayableService, public iPauseableService,
 		public iSeekableService, public sigc::trackable, public iServiceInformation,
 		public iAudioTrackSelection, public iAudioChannelSelection,
-		public iSubserviceList, public iTimeshiftService,
+		public iSubserviceList, public iTimeshiftService, public iTapService,
 		public iCueSheet, public iSubtitleOutput, public iAudioDelay,
 		public iRdsDecoder, public iStreamableService,
 		public iStreamedService
@@ -113,6 +113,7 @@ public:
 	RESULT frontendInfo(ePtr<iFrontendInformation> &ptr);
 	RESULT subServices(ePtr<iSubserviceList> &ptr);
 	RESULT timeshift(ePtr<iTimeshiftService> &ptr);
+	RESULT tap(ePtr<iTapService> &ptr);
 	RESULT cueSheet(ePtr<iCueSheet> &ptr);
 	RESULT subtitle(ePtr<iSubtitleOutput> &ptr);
 	RESULT audioDelay(ePtr<iAudioDelay> &ptr);
@@ -179,7 +180,11 @@ public:
 	void goToNextPlaybackFile();
 	RESULT saveTimeshiftFile();
 	std::string getTimeshiftFilename();
-	void switchToLive();
+	virtual void switchToLive();
+
+		// iTapService
+	bool startTapToFD(int fd, const std::vector<int> &pids, int packetsize = 188);
+	void stopTapToFD();
 
 		// iCueSheet
 	PyObject *getCutList();
@@ -211,6 +216,7 @@ protected:
 
 	ePtr<iTSMPEGDecoder> m_decoder;
 	int m_decoder_index;
+	int m_is_primary;
 	int m_have_video_pid;
 	int m_tune_state;
 	bool m_noaudio;
@@ -221,7 +227,7 @@ protected:
 	int m_current_audio_pid;
 	int m_current_video_pid_type;
 
-	eDVBServicePlay(const eServiceReference &ref, eDVBService *service);
+	eDVBServicePlay(const eServiceReference &ref, eDVBService *service, bool connect_event=true);
 
 		/* events */
 	void gotNewEvent(int error);
@@ -267,6 +273,10 @@ protected:
 	int m_skipmode;
 	int m_fastforward;
 	int m_slowmotion;
+
+		/* tap */
+
+	ePtr<iDVBTSRecorder> m_tap_recorder;
 
 		/* cuesheet */
 
