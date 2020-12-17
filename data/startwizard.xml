@@ -1,6 +1,6 @@
 <wizard>
 		<step id="start" nextstep="introduction">
-			<text value="Welcome to Open Vision %s-%s\nThis start wizard will guide you through the basic setup of your %s %s (kernel %s).\nPress the OK button on your remote control to move to the next step."/>
+			<text value="Welcome to Sat-Lodge %s-%s\nThis start wizard will guide you through the basic setup of your %s %s (kernel %s).\nPress the OK button on your remote control to move to the next step."/>
 			<code>
 self.clearSelectedKeys()
 self.selectKey("OK")
@@ -284,7 +284,7 @@ self.selectKey("OK")
 			</code>
 		</step>
 		<step id="end" laststep="true">
-			<text value="Thank you for using the wizard. Your %s %s (kernel %s) is now ready for use.\nPress OK to start using Open Vision %s-%s"/>
+			<text value="Thank you for using the wizard. Your %s %s (kernel %s) is now ready for use.\nPress OK to start using Sat-Lodge %s-%s"/>
 			<code>
 self.clearSelectedKeys()
 self.selectKey("OK")
